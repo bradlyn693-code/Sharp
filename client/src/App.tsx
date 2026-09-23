@@ -38,21 +38,6 @@ const PURPLE = "#7c3aed";
 
 const plans = [
   {
-    name: "Pro",
-    price: "150.00",
-    currency: "KES",
-    subtitle: "For larger, high-traffic servers.",
-    specs: [
-      ["Memory", "4096 MB"],
-      ["Disk", "20480 MB"],
-      ["CPU", "300%"],
-      ["Databases", "5"],
-      ["Backups", "5"],
-    ],
-    accent: "fuchsia",
-    popular: false,
-  },
-  {
     name: "Unlimited",
     price: "250.00",
     currency: "KES",
