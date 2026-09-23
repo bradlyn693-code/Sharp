@@ -179,6 +179,16 @@ function Field({ label, type = "text", placeholder, value, onChange }: { label: 
   );
 }
 
+type StoredAccount = { name: string; email: string; password: string };
+
+function getStoredAccounts(): StoredAccount[] {
+  try {
+    return JSON.parse(localStorage.getItem("fluxy_accounts") || "[]") as StoredAccount[];
+  } catch {
+    return [];
+  }
+}
+
 function LoginPage() {
   const [, navigate] = useLocation();
   const [email, setEmail] = useState(localStorage.getItem("fluxy_email") ?? "");
@@ -190,8 +200,15 @@ function LoginPage() {
 
   function submit(e: FormEvent) {
     e.preventDefault();
+    const normalizedEmail = email.trim().toLowerCase();
+    const account = getStoredAccounts().find((item) => item.email === normalizedEmail && item.password === password);
+    if (!account) {
+      toast.error("Account not found", { description: "Create an account first or check your email and password." });
+      return;
+    }
     localStorage.setItem("fluxy_logged", "true");
-    localStorage.setItem("fluxy_email", email || "hello@fluxy.tech");
+    localStorage.setItem("fluxy_email", account.email);
+    localStorage.setItem("fluxy_name", account.name);
     navigate("/dashboard");
     toast.success("Welcome back to Fluxy Tech", { description: "Your infrastructure workspace is ready." });
   }
@@ -222,9 +239,18 @@ function SignupPage() {
 
   function submit(e: FormEvent) {
     e.preventDefault();
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedName = name.trim();
+    const accounts = getStoredAccounts();
+    if (accounts.some((item) => item.email === normalizedEmail)) {
+      toast.error("Account already exists", { description: "Sign in with this email or use a different email address." });
+      return;
+    }
+    accounts.push({ name: normalizedName, email: normalizedEmail, password });
+    localStorage.setItem("fluxy_accounts", JSON.stringify(accounts));
     localStorage.setItem("fluxy_logged", "true");
-    localStorage.setItem("fluxy_email", email || "hello@fluxy.tech");
-    localStorage.setItem("fluxy_name", name || "Alex Morgan");
+    localStorage.setItem("fluxy_email", normalizedEmail);
+    localStorage.setItem("fluxy_name", normalizedName);
     navigate("/dashboard");
     toast.success("Your Fluxy workspace is ready");
   }
@@ -282,7 +308,7 @@ function Sidebar({ mobileOpen, closeMobile, collapsed, toggleCollapsed }: { mobi
     <>
       {mobileOpen && <button aria-label="Close menu" className="fixed inset-0 z-40 bg-[#050309]/70 backdrop-blur-sm lg:hidden" onClick={closeMobile} />}
       <aside className={`sidebar fixed inset-y-0 left-0 z-50 flex w-[270px] flex-col border-r border-[#2d1f4e] bg-[#0a0612] px-4 py-5 transition-[width,transform,padding] duration-200 lg:translate-x-0 ${collapsed ? "sidebar-collapsed lg:w-[82px] lg:px-3" : ""} ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className={`mb-8 flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-3"}`}><Brand compact={collapsed} /><div className="flex items-center gap-2"><button onClick={toggleCollapsed} className="icon-button hidden lg:grid" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} title={collapsed ? "Expand sidebar" : "Collapse sidebar"}>{collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}</button><button onClick={closeMobile} className="icon-button lg:hidden"><X size={17} /></button></div></div>
+        <div className={`mb-8 flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-3"}`}><Brand compact={collapsed} /><button onClick={() => { if (window.matchMedia("(min-width: 1024px)").matches) toggleCollapsed(); else closeMobile(); }} className="icon-button" aria-label={mobileOpen ? "Close sidebar" : collapsed ? "Expand sidebar" : "Collapse sidebar"} title={mobileOpen ? "Close sidebar" : collapsed ? "Expand sidebar" : "Collapse sidebar"}>{mobileOpen ? <X size={17} /> : collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}</button></div>
         <div className="sidebar-section mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Workspace</div>
         <nav className="space-y-1">
           {navItems.slice(0, 4).map((item) => {
