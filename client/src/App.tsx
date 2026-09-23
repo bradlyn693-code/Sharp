@@ -15,6 +15,7 @@ import {
   Database,
   ExternalLink,
   HardDrive,
+  Globe2,
   LayoutDashboard,
   LockKeyhole,
   LogOut,
@@ -78,6 +79,7 @@ const navItems: { label: string; href: string; icon: LucideIcon; soon?: boolean 
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "VPS", href: "/vps", icon: Cloud },
   { label: "Channels", href: "/channels", icon: Tv },
+  { label: "Foreign Numbers", href: "/foreign-numbers", icon: Globe2 },
   { label: "My Servers", href: "/servers", icon: Server },
   { label: "Wallet", href: "/wallet", icon: WalletCards },
   { label: "Deployments", href: "#", icon: Zap, soon: true },
@@ -329,14 +331,14 @@ function Sidebar({ mobileOpen, closeMobile, collapsed, toggleCollapsed }: { mobi
         <div className={`mb-8 flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-3"}`}><Brand compact={collapsed} /><button onClick={() => { if (window.matchMedia("(min-width: 1024px)").matches) toggleCollapsed(); else closeMobile(); }} className="icon-button" aria-label={mobileOpen ? "Close sidebar" : collapsed ? "Expand sidebar" : "Collapse sidebar"} title={mobileOpen ? "Close sidebar" : collapsed ? "Expand sidebar" : "Collapse sidebar"}>{mobileOpen ? <X size={17} /> : collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}</button></div>
         <div className="sidebar-section mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Workspace</div>
         <nav className="space-y-1">
-          {navItems.slice(0, 5).map((item) => {
+          {navItems.slice(0, 6).map((item) => {
             const active = location === item.href || (item.href === "/dashboard" && location === "/");
             return <Link key={item.label} href={item.href} onClick={closeMobile} className={`nav-item ${active ? "nav-item-active" : ""}`}><item.icon size={17} strokeWidth={active ? 2.2 : 1.8} /><span className="sidebar-label">{item.label}</span>{active && <span className="nav-active-line" />}</Link>;
           })}
         </nav>
         <div className="sidebar-section mb-3 mt-9 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Manage</div>
         <nav className="space-y-1">
-          {navItems.slice(5).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span className="sidebar-label">{item.label}</span><span className="sidebar-label ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
+          {navItems.slice(6).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span className="sidebar-label">{item.label}</span><span className="sidebar-label ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
         </nav>
         <div className="mt-auto sidebar-user-area">
           <button onClick={signOut} className="flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold text-[#b17183] transition-colors hover:bg-[#2a101d] hover:text-[#ef92a6]"><LogOut size={15} /><span className="sidebar-label">Sign out</span></button>
@@ -466,6 +468,39 @@ function ChannelsPage() {
   </DashboardLayout>;
 }
 
+function ForeignNumbersPage() {
+  const numbers = [
+    { id: "usa", country: "USA", flag: "🇺🇸", price: "750", code: "+1" },
+    { id: "uk", country: "UK", flag: "🇬🇧", price: "600", code: "+44" },
+    { id: "canada", country: "Canada", flag: "🇨🇦", price: "500", code: "+1" },
+    { id: "germany", country: "Germany", flag: "🇩🇪", price: "650", code: "+49" },
+    { id: "netherlands", country: "Netherlands", flag: "🇳🇱", price: "600", code: "+31" },
+    { id: "australia", country: "Australia", flag: "🇦🇺", price: "750", code: "+61" },
+  ];
+  const [showPay, setShowPay] = useState<(typeof numbers)[number] | null>(null);
+
+  function pay() {
+    if (!showPay) return;
+    const result = activatePlan({ name: `${showPay.country} number ${showPay.code}`, price: showPay.price, ram: "—", type: "Foreign Number" });
+    if (!result.success) {
+      toast.error("Insufficient wallet balance", { description: `Add KES ${(Number(showPay.price) - result.balance).toFixed(2)} to purchase this number.` });
+      return;
+    }
+    setShowPay(null);
+    toast.success("Foreign number activated", { description: `${showPay.country} ${showPay.code} is now available in My Servers.` });
+  }
+
+  return <DashboardLayout><AppHeader title="Foreign Numbers" subtitle="Choose a virtual number for your global operations." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />
+    <div className="mx-auto max-w-[1100px]">
+      <div className="mb-6"><p className="eyebrow"><span className="eyebrow-dot" /> Global reach</p><h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-white">International numbers</h2><p className="mt-2 text-sm text-[#877a9f]">Pick a country and activate a virtual number using your wallet balance.</p></div>
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+        {numbers.map((number) => <div key={number.id} className="plan-card group text-center"><div className="mb-2 text-[36px] transition-transform duration-200 group-hover:-translate-y-1">{number.flag}</div><h3 className="text-sm font-bold text-white">{number.country} {number.code}</h3><p className="my-3 font-display text-2xl font-semibold text-white"><span className="mr-1 text-xs font-medium text-[#8a7ca1]">KES</span>{number.price}</p><button onClick={() => setShowPay(number)} className="primary-button w-full">Buy now <ArrowRight size={15} /></button></div>)}
+      </div>
+    </div>
+    {showPay && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close foreign number payment modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowPay(null)} /><div className="relative w-full max-w-[360px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowPay(null)} className="icon-button absolute right-4 top-4" aria-label="Close foreign number payment modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">{showPay.flag}</div><h3 className="text-base font-bold text-white">{showPay.country} {showPay.code}</h3><p className="mt-1 text-sm text-[#a99abb]">KES {showPay.price}</p></div><div className="flex gap-3"><button onClick={() => setShowPay(null)} className="secondary-button flex-1">Cancel</button><button onClick={pay} className="primary-button flex-1">Pay KES {showPay.price}</button></div></div></div>}
+  </DashboardLayout>;
+}
+
 function WalletPage() {
   const paystackUrl = "https://paystack.shop/pay/o2dkau16m7";
   const [showPay, setShowPay] = useState(false);
@@ -488,7 +523,7 @@ function WalletPage() {
 }
 
 function App() {
-  return <><Switch><Route path="/" component={() => <RedirectTo href={isLoggedIn() ? "/dashboard" : "/login"} />} /><Route path="/login" component={LoginPage} /><Route path="/signup" component={SignupPage} /><Route path="/reset-password" component={ResetPasswordPage} /><Route path="/dashboard"><RequireAuth><DashboardPage /></RequireAuth></Route><Route path="/vps"><RequireAuth><VpsPage /></RequireAuth></Route><Route path="/channels"><RequireAuth><ChannelsPage /></RequireAuth></Route><Route path="/servers"><RequireAuth><ServersPage /></RequireAuth></Route><Route path="/wallet"><RequireAuth><WalletPage /></RequireAuth></Route><Route><RedirectTo href="/login" /></Route></Switch><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></>;
+  return <><Switch><Route path="/" component={() => <RedirectTo href={isLoggedIn() ? "/dashboard" : "/login"} />} /><Route path="/login" component={LoginPage} /><Route path="/signup" component={SignupPage} /><Route path="/reset-password" component={ResetPasswordPage} /><Route path="/dashboard"><RequireAuth><DashboardPage /></RequireAuth></Route><Route path="/vps"><RequireAuth><VpsPage /></RequireAuth></Route><Route path="/channels"><RequireAuth><ChannelsPage /></RequireAuth></Route><Route path="/foreign-numbers"><RequireAuth><ForeignNumbersPage /></RequireAuth></Route><Route path="/servers"><RequireAuth><ServersPage /></RequireAuth></Route><Route path="/wallet"><RequireAuth><WalletPage /></RequireAuth></Route><Route><RedirectTo href="/login" /></Route></Switch><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></>;
 }
 
 function RedirectTo({ href }: { href: string }) {
