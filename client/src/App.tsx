@@ -38,51 +38,6 @@ const PURPLE = "#7c3aed";
 
 const plans = [
   {
-    name: "Starter",
-    price: "50.00",
-    currency: "Kshs",
-    subtitle: "A lightweight start for personal projects.",
-    specs: [
-      ["Memory", "400 MB"],
-      ["Disk", "2000 MB"],
-      ["CPU", "100%"],
-      ["Databases", "1"],
-      ["Backups", "1"],
-    ],
-    accent: "slate",
-    popular: false,
-  },
-  {
-    name: "Basic",
-    price: "80.00",
-    currency: "KES",
-    subtitle: "A step up for small communities.",
-    specs: [
-      ["Memory", "1024 MB"],
-      ["Disk", "5000 MB"],
-      ["CPU", "150%"],
-      ["Databases", "2"],
-      ["Backups", "2"],
-    ],
-    accent: "indigo",
-    popular: false,
-  },
-  {
-    name: "Standard",
-    price: "100.00",
-    currency: "KES",
-    subtitle: "Our most popular plan.",
-    specs: [
-      ["Memory", "2048 MB"],
-      ["Disk", "10240 MB"],
-      ["CPU", "200%"],
-      ["Databases", "3"],
-      ["Backups", "3"],
-    ],
-    accent: "violet",
-    popular: true,
-  },
-  {
     name: "Pro",
     price: "150.00",
     currency: "KES",
@@ -387,7 +342,7 @@ function PlanCard({ plan }: { plan: (typeof plans)[number] }) {
 function DashboardPage() {
   const [query, setQuery] = useState("");
   const filteredPlans = useMemo(() => plans.filter((plan) => `${plan.name} ${plan.subtitle}`.toLowerCase().includes(query.toLowerCase())), [query]);
-  return <DashboardLayout><AppHeader title="Pricing & Plans" subtitle="Choose the perfect plan for your infrastructure · Upgrade anytime, cancel anytime" onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} /><div className="mb-7 grid gap-4 md:grid-cols-3"><StatCard icon={Server} label="Active servers" value="12 / 20" meta="+2 added this month" /><StatCard icon={WalletCards} label="Wallet balance" value="$1,240.50" meta="Available for renewals" /><StatCard icon={Activity} label="Monthly usage" value="78%" meta="of Pro plan limit" progress={78} /></div><section><div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Pick your capacity</p><h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.03em] text-white">Plans that scale with you</h2></div><label className="dashboard-filter"><Search size={14} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter plans" /></label></div><div className="plan-grid">{filteredPlans.map((plan) => <PlanCard key={plan.name} plan={plan} />)}</div>{filteredPlans.length === 0 && <div className="empty-search"><Search size={22} /><p>No plans match “{query}”.</p></div>}</section></DashboardLayout>;
+  return <DashboardLayout><AppHeader title="Pricing & Plans" subtitle="Choose the perfect plan for your infrastructure · Upgrade anytime, cancel anytime" onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} /><div className="mb-7 grid gap-4 md:grid-cols-2"><StatCard icon={Server} label="Active servers" value="0 / 20" meta="No active servers" /><StatCard icon={WalletCards} label="Wallet balance" value="KES 0.00" meta="Available for renewals" /></div><section><div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Pick your capacity</p><h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.03em] text-white">Plans that scale with you</h2></div><label className="dashboard-filter"><Search size={14} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter plans" /></label></div><div className="plan-grid">{filteredPlans.map((plan) => <PlanCard key={plan.name} plan={plan} />)}</div>{filteredPlans.length === 0 && <div className="empty-search"><Search size={22} /><p>No plans match “{query}”.</p></div>}</section></DashboardLayout>;
 }
 
 
@@ -416,11 +371,6 @@ function WalletPage() {
   const [showPay, setShowPay] = useState(false);
   const [balance] = useState(() => Number(localStorage.getItem("fluxy_balance") || "0"));
   const pendingPlan = JSON.parse(localStorage.getItem("fluxy_pending_vps") || "null") as { name: string; ram: string; price: string } | null;
-  const txs = JSON.parse(localStorage.getItem("fluxy_txs") || "null") as { date: string; desc: string; amount: string }[] | null;
-  const transactions = txs || [
-    { date: "20 May 2026", desc: "Server renewal · Standard", amount: "-KES 100.00" },
-    { date: "18 May 2026", desc: "Funds added", amount: "+KES 500.00" },
-  ];
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -434,7 +384,6 @@ function WalletPage() {
     <div className="mx-auto max-w-[1000px]">
       {pendingPlan && <div className="pending-plan-banner mb-5"><div><p className="eyebrow"><span className="eyebrow-dot" /> VPS plan selected</p><p className="mt-2 text-sm font-semibold text-white">{pendingPlan.name} · KSH {pendingPlan.price}/month</p><p className="mt-1 text-xs text-[#8b7aaa]">Fund your wallet to complete this VPS purchase.</p></div><button onClick={() => setShowPay(true)} className="primary-button shrink-0">Add funds <ArrowRight size={14} /></button></div>}
       <div className="wallet-hero mb-6"><div className="wallet-hero-glow" /><div className="relative"><p className="text-[13px] font-medium text-[#a99abb]">Current balance</p><p className="mt-2 font-display text-[40px] font-semibold tracking-[-0.055em] text-white">KES {balance.toFixed(2)}</p><p className="mt-1 text-xs text-[#74678c]">Available for renewals &amp; purchases</p><button onClick={() => setShowPay(true)} className="primary-button mt-6">+ Add funds</button><p className="mt-3 text-[11px] text-[#6b5a8a]">Secure payment by Paystack · Instant credit</p></div></div>
-      <div className="transaction-card overflow-hidden"><div className="flex items-center justify-between border-b border-[#2d1f4e] p-5"><h3 className="font-semibold text-white">Transaction history</h3><span className="text-xs text-[#6b5a8a]">{transactions.length} transactions</span></div><div className="divide-y divide-[#2d1f4e]/50">{transactions.map((tx, index) => <div key={`${tx.date}-${index}`} className="flex items-center justify-between p-4 transition-colors hover:bg-[#0f0a1a]/50"><div><p className="text-sm font-medium text-white">{tx.desc}</p><p className="mt-1 text-xs text-[#6b5a8a]">{tx.date}</p></div><p className={`text-sm font-semibold ${tx.amount.startsWith("+") ? "text-[#10b981]" : "text-white"}`}>{tx.amount}</p></div>)}</div></div>
     </div>
     {showPay && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close payment modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowPay(false)} /><div className="wallet-pay-modal relative w-full max-w-[480px] overflow-hidden rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><div className="flex items-center justify-between border-b border-[#2d1f4e] bg-[#0f0a1a] p-5"><div className="flex items-center gap-3"><div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-lg">💳</div><div><h3 className="text-[15px] font-bold text-white">Add funds</h3><p className="text-[11px] text-[#8b7aaa]">Paystack secure checkout</p></div></div><button onClick={() => setShowPay(false)} className="icon-button" aria-label="Close payment modal"><X size={15} /></button></div><div className="bg-white"><iframe src={paystackUrl} title="Paystack Checkout" className="h-[600px] w-full border-0" allow="payment" loading="eager" /></div><div className="flex items-center justify-between border-t border-[#2d1f4e] bg-[#0f0a1a] p-3"><span className="text-[11px] text-[#6b5a8a]">🔒 Secured by Paystack</span><a href={paystackUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] font-medium text-[#7c3aed] hover:underline">Open in new tab ↗</a></div></div></div>}
   </DashboardLayout>;
