@@ -409,9 +409,30 @@ function ServersPage() {
 }
 
 function WalletPage() {
-  const selected = localStorage.getItem("fluxy_selected_plan");
-  function addFunds() { toast.info("Payments are in preview mode", { description: "Connect a payment method to fund your Fluxy wallet." }); }
-  return <DashboardLayout><AppHeader title="Wallet" subtitle="Keep renewals simple and your infrastructure moving." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} /><div className="grid gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(300px,0.8fr)]"><div className="balance-card"><div className="flex items-start justify-between"><div><p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#9484ae]">Available balance</p><p className="mt-4 font-display text-5xl font-semibold tracking-[-0.055em] text-white">KES 0.00</p></div><div className="wallet-icon"><WalletCards size={21} /></div></div><div className="mt-12 flex flex-col justify-between gap-4 border-t border-white/[0.09] pt-5 sm:flex-row sm:items-center"><p className="text-xs text-[#8b7ba4]">Add funds to cover plan renewals and usage.</p><button className="primary-button shrink-0" onClick={addFunds}><Plus size={15} /> Add funds</button></div></div><div className="wallet-note"><div className="mb-4 flex items-center gap-2 text-xs font-semibold text-white"><ShieldCheck size={16} className="text-[#b47cff]" /> Secure by default</div><p className="text-sm leading-6 text-[#8b7ba4]">Your wallet balance is only used for your Fluxy infrastructure. No surprise charges, ever.</p><div className="mt-6 flex items-center gap-2 text-xs font-medium text-[#b47cff]"><LockKeyhole size={14} /> Encrypted billing controls</div></div></div><section className="mt-8"><div className="mb-4 flex items-center justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Ledger</p><h2 className="mt-2 font-display text-xl font-semibold text-white">Transaction history</h2></div><button onClick={() => toast.info("Your transaction history is already up to date.")} className="text-xs font-semibold text-[#ae7cff] hover:text-white">View all</button></div><div className="transaction-card overflow-x-auto"><table className="w-full min-w-[560px] text-left"><thead><tr><th>Date</th><th>Description</th><th>Status</th><th className="text-right">Amount</th></tr></thead><tbody><tr><td className="text-[#a99abb]">23 Sep 2026</td><td><div className="flex items-center gap-3"><div className="table-icon"><Sparkles size={14} /></div><div><p className="font-medium text-white">{selected ? `${selected} plan selection` : "Fluxy wallet opened"}</p><p className="mt-1 text-[11px] text-[#796c90]">Workspace activity</p></div></div></td><td><span className="status-pill">Completed</span></td><td className="text-right font-semibold text-white">KES 0.00</td></tr></tbody></table></div></section></DashboardLayout>;
+  const paystackUrl = "https://paystack.shop/pay/o2dkau16m7";
+  const [showPay, setShowPay] = useState(false);
+  const [balance] = useState(() => Number(localStorage.getItem("fluxy_balance") || "0"));
+  const txs = JSON.parse(localStorage.getItem("fluxy_txs") || "null") as { date: string; desc: string; amount: string }[] | null;
+  const transactions = txs || [
+    { date: "20 May 2026", desc: "Server renewal · Standard", amount: "-KES 100.00" },
+    { date: "18 May 2026", desc: "Funds added", amount: "+KES 500.00" },
+  ];
+
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.href = paystackUrl;
+    document.head.appendChild(link);
+    return () => link.remove();
+  }, []);
+
+  return <DashboardLayout><AppHeader title="Wallet" subtitle="Manage your balance and transactions." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />
+    <div className="mx-auto max-w-[1000px]">
+      <div className="wallet-hero mb-6"><div className="wallet-hero-glow" /><div className="relative"><p className="text-[13px] font-medium text-[#a99abb]">Current balance</p><p className="mt-2 font-display text-[40px] font-semibold tracking-[-0.055em] text-white">KES {balance.toFixed(2)}</p><p className="mt-1 text-xs text-[#74678c]">Available for renewals &amp; purchases</p><button onClick={() => setShowPay(true)} className="primary-button mt-6">+ Add funds</button><p className="mt-3 text-[11px] text-[#6b5a8a]">Secure payment by Paystack · Instant credit</p></div></div>
+      <div className="transaction-card overflow-hidden"><div className="flex items-center justify-between border-b border-[#2d1f4e] p-5"><h3 className="font-semibold text-white">Transaction history</h3><span className="text-xs text-[#6b5a8a]">{transactions.length} transactions</span></div><div className="divide-y divide-[#2d1f4e]/50">{transactions.map((tx, index) => <div key={`${tx.date}-${index}`} className="flex items-center justify-between p-4 transition-colors hover:bg-[#0f0a1a]/50"><div><p className="text-sm font-medium text-white">{tx.desc}</p><p className="mt-1 text-xs text-[#6b5a8a]">{tx.date}</p></div><p className={`text-sm font-semibold ${tx.amount.startsWith("+") ? "text-[#10b981]" : "text-white"}`}>{tx.amount}</p></div>)}</div></div>
+    </div>
+    {showPay && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close payment modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowPay(false)} /><div className="wallet-pay-modal relative w-full max-w-[480px] overflow-hidden rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><div className="flex items-center justify-between border-b border-[#2d1f4e] bg-[#0f0a1a] p-5"><div className="flex items-center gap-3"><div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-lg">💳</div><div><h3 className="text-[15px] font-bold text-white">Add funds</h3><p className="text-[11px] text-[#8b7aaa]">Paystack secure checkout</p></div></div><button onClick={() => setShowPay(false)} className="icon-button" aria-label="Close payment modal"><X size={15} /></button></div><div className="bg-white"><iframe src={paystackUrl} title="Paystack Checkout" className="h-[600px] w-full border-0" allow="payment" loading="eager" /></div><div className="flex items-center justify-between border-t border-[#2d1f4e] bg-[#0f0a1a] p-3"><span className="text-[11px] text-[#6b5a8a]">🔒 Secured by Paystack</span><a href={paystackUrl} target="_blank" rel="noopener noreferrer" className="text-[11px] font-medium text-[#7c3aed] hover:underline">Open in new tab ↗</a></div></div></div>}
+  </DashboardLayout>;
 }
 
 function App() {
