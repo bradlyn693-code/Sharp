@@ -125,3 +125,11 @@ table th { padding: 16px 18px; border-bottom: 1px solid #2d1f4e; color: #766a8c;
 
 .pending-plan-banner { display: flex; align-items: center; justify-content: space-between; gap: 18px; border: 1px solid #6d43a1; border-radius: 15px; background: linear-gradient(105deg, rgba(124,58,237,.18), rgba(26,16,46,.92)); padding: 17px 18px; box-shadow: 0 10px 25px rgba(0,0,0,.12); }
 @media (max-width: 640px) { .pending-plan-banner { align-items: flex-start; flex-direction: column; } }
+
+.plan-card-admin { border-color: #9f6b3e; background: radial-gradient(ellipse 100% 70% at 100% 0%, rgba(245,158,11,.16), transparent 65%), linear-gradient(145deg, rgba(44,26,44,.98), rgba(25,14,35,.92)); box-shadow: 0 0 0 1px rgba(245,158,11,.12), 0 0 30px rgba(245,158,11,.08); }
+.plan-card-admin:hover { border-color: #f59e0b; box-shadow: 0 16px 40px rgba(0,0,0,.22), 0 0 30px rgba(245,158,11,.16); }
+.admin-badge { position: absolute; top: -12px; right: 18px; display: flex; align-items: center; gap: 5px; border: 1px solid rgba(253,230,138,.35); border-radius: 7px; background: linear-gradient(105deg, #b45309, #f59e0b); padding: 5px 9px; color: #fff; font-size: 9px; font-weight: 800; letter-spacing: .08em; box-shadow: 0 4px 14px rgba(245,158,11,.22); }
+.admin-features { display: flex; flex-direction: column; gap: 5px; margin-top: 16px; border-top: 1px solid rgba(245,158,11,.16); padding-top: 14px; }
+.admin-features span { color: #d9c6aa; font-size: 10px; line-height: 1.35; }
+.admin-features span::first-letter { color: #fbbf24; }
+.admin-feature-more { color: #fbbf24 !important; font-weight: 700; }

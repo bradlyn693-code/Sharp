@@ -112,6 +112,17 @@ const plans = [
     accent: "rose",
     popular: false,
   },
+  {
+    name: "Admin Panel",
+    price: "550.00",
+    currency: "KSH",
+    subtitle: "Full admin access + extra resources.",
+    specs: [["Memory", "Unlimited"], ["Disk", "Unlimited"], ["CPU", "Unlimited"], ["Databases", "Unlimited"], ["Backups", "Unlimited"]],
+    accent: "rose",
+    popular: false,
+    isAdmin: true,
+    features: ["👑 Full Pterodactyl Admin Access", "♾️ Unlimited RAM / Disk / CPU", "👥 Create Unlimited Users & Servers", "🔧 Manage All Nodes & Locations", "📊 Advanced Analytics & Logs", "🛡️ Ban / Suspend Users", "💰 Revenue & Billing Control", "🔌 Install Eggs & Plugins", "🚀 Priority Support 24/7", "🎨 Custom Theme + Branding"],
+  },
 ] as const;
 
 const vpsPlans = [
@@ -363,12 +374,12 @@ function PlanCard({ plan }: { plan: (typeof plans)[number] }) {
     toast.success(`${plan.name} plan selected`, { description: "Your plan is ready to activate from the wallet." });
     navigate("/wallet");
   }
-  return <article className={`plan-card ${plan.popular ? "plan-card-popular" : ""}`}>
-    {plan.popular && <div className="popular-badge"><Sparkles size={12} /> MOST POPULAR</div>}
+  return <article className={`plan-card ${plan.popular ? "plan-card-popular" : ""} ${"isAdmin" in plan && plan.isAdmin ? "plan-card-admin" : ""}`}>
+    {plan.popular && <div className="popular-badge"><Sparkles size={12} /> MOST POPULAR</div>}{"isAdmin" in plan && plan.isAdmin && <div className="admin-badge">👑 ADMIN ACCESS</div>}
     <div className="flex items-start justify-between gap-3"><div><div className="flex items-center gap-2"><span className={`plan-orb plan-orb-${plan.accent}`} /><h3 className="text-[18px] font-semibold text-white">{plan.name}</h3></div><p className="mt-2 min-h-[36px] text-xs leading-5 text-[#8f82a4]">{plan.subtitle}</p></div><button className="plan-more" aria-label={`${plan.name} details`}><MoreHorizontal size={16} /></button></div>
     <div className="mt-5 flex items-end gap-1"><span className="text-xs font-semibold text-[#8b7aaa]">{plan.currency}</span><span className="font-display text-[28px] font-semibold tracking-[-0.045em] text-white">{plan.price}</span><span className="mb-1 text-[11px] text-[#776a8f]">/ monthly</span></div>
     <div className="my-5 h-px bg-[#2d1f4e]" />
-    <div className="space-y-3">{plan.specs.map(([label, value]) => <div key={label} className="flex items-center justify-between text-xs"><span className="text-[#887b9d]">{label}</span><span className="font-medium text-[#eee8fb]">{value}</span></div>)}</div>
+    <div className="space-y-3">{plan.specs.map(([label, value]) => <div key={label} className="flex items-center justify-between text-xs"><span className="text-[#887b9d]">{label}</span><span className="font-medium text-[#eee8fb]">{value}</span></div>)}</div>{"features" in plan && plan.features && <div className="admin-features">{plan.features.slice(0, 4).map((feature) => <span key={feature}>{feature}</span>)}<span className="admin-feature-more">+6 more admin capabilities</span></div>}
     <button onClick={buy} className={`buy-button mt-6 w-full ${plan.popular ? "buy-button-featured" : ""}`}>Buy now <ArrowRight size={14} /></button>
   </article>;
 }
