@@ -19,6 +19,8 @@ import {
   LockKeyhole,
   LogOut,
   Menu,
+  PanelLeftClose,
+  PanelLeftOpen,
   MoreHorizontal,
   Plus,
   Search,
@@ -303,7 +305,7 @@ function RequireAuth({ children }: { children: ReactNode }) {
   return allowed ? <>{children}</> : <div className="min-h-screen bg-[#0f0a1a]" />;
 }
 
-function Sidebar({ mobileOpen, closeMobile }: { mobileOpen: boolean; closeMobile: () => void }) {
+function Sidebar({ mobileOpen, closeMobile, collapsed, toggleCollapsed }: { mobileOpen: boolean; closeMobile: () => void; collapsed: boolean; toggleCollapsed: () => void }) {
   const [location, navigate] = useLocation();
   const name = localStorage.getItem("fluxy_name") || "Alex Morgan";
   const email = localStorage.getItem("fluxy_email") || "alex@northstar.io";
@@ -314,25 +316,25 @@ function Sidebar({ mobileOpen, closeMobile }: { mobileOpen: boolean; closeMobile
   return (
     <>
       {mobileOpen && <button aria-label="Close menu" className="fixed inset-0 z-40 bg-[#050309]/70 backdrop-blur-sm lg:hidden" onClick={closeMobile} />}
-      <aside className={`sidebar fixed inset-y-0 left-0 z-50 flex w-[270px] flex-col border-r border-[#2d1f4e] bg-[#0a0612] px-4 py-5 transition-transform duration-200 lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="mb-8 flex items-center justify-between px-3"><Brand /><button onClick={closeMobile} className="icon-button lg:hidden"><X size={17} /></button></div>
-        <div className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Workspace</div>
+      <aside className={`sidebar fixed inset-y-0 left-0 z-50 flex w-[270px] flex-col border-r border-[#2d1f4e] bg-[#0a0612] px-4 py-5 transition-[width,transform,padding] duration-200 lg:translate-x-0 ${collapsed ? "sidebar-collapsed lg:w-[82px] lg:px-3" : ""} ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        <div className={`mb-8 flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-3"}`}><Brand compact={collapsed} /><div className="flex items-center gap-2"><button onClick={toggleCollapsed} className="icon-button hidden lg:grid" aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"} title={collapsed ? "Expand sidebar" : "Collapse sidebar"}>{collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}</button><button onClick={closeMobile} className="icon-button lg:hidden"><X size={17} /></button></div></div>
+        <div className="sidebar-section mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Workspace</div>
         <nav className="space-y-1">
           {navItems.slice(0, 4).map((item) => {
             const active = location === item.href || (item.href === "/dashboard" && location === "/");
-            return <Link key={item.label} href={item.href} onClick={closeMobile} className={`nav-item ${active ? "nav-item-active" : ""}`}><item.icon size={17} strokeWidth={active ? 2.2 : 1.8} /><span>{item.label}</span>{active && <span className="nav-active-line" />}</Link>;
+            return <Link key={item.label} href={item.href} onClick={closeMobile} className={`nav-item ${active ? "nav-item-active" : ""}`}><item.icon size={17} strokeWidth={active ? 2.2 : 1.8} /><span className="sidebar-label">{item.label}</span>{active && <span className="nav-active-line" />}</Link>;
           })}
         </nav>
-        <div className="mb-3 mt-9 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Manage</div>
+        <div className="sidebar-section mb-3 mt-9 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Manage</div>
         <nav className="space-y-1">
-          {navItems.slice(4).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span>{item.label}</span><span className="ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
+          {navItems.slice(4).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span className="sidebar-label">{item.label}</span><span className="sidebar-label ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
         </nav>
-        <div className="mt-auto">
+        <div className="mt-auto sidebar-user-area">
           <div className="mb-4 rounded-2xl border border-[#2d1f4e] bg-[#130b22] p-3">
-            <div className="flex items-center gap-3"><div className="avatar">{name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()}</div><div className="min-w-0 flex-1"><p className="truncate text-xs font-semibold text-white">{name}</p><p className="truncate text-[11px] text-[#7e719a]">{email}</p></div><ChevronDown size={14} className="text-[#786b91]" /></div>
-            <div className="mt-3 flex items-center justify-between border-t border-white/[0.06] pt-3"><span className="flex items-center gap-1.5 text-[10px] font-semibold text-[#b78cff]"><Sparkles size={12} /> PRO PLAN</span><span className="text-[10px] text-[#6c5f84]">Renews 24 Oct</span></div>
+            <div className="flex items-center gap-3"><div className="avatar">{name.split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase()}</div><div className="sidebar-user-meta min-w-0 flex-1"><p className="truncate text-xs font-semibold text-white">{name}</p><p className="truncate text-[11px] text-[#7e719a]">{email}</p></div><ChevronDown size={14} className="text-[#786b91]" /></div>
+            <div className="sidebar-user-plan mt-3 flex items-center justify-between border-t border-white/[0.06] pt-3"><span className="flex items-center gap-1.5 text-[10px] font-semibold text-[#b78cff]"><Sparkles size={12} /> PRO PLAN</span><span className="text-[10px] text-[#6c5f84]">Renews 24 Oct</span></div>
           </div>
-          <button onClick={signOut} className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold text-[#b17183] transition-colors hover:bg-[#2a101d] hover:text-[#ef92a6]"><LogOut size={15} /> Sign out</button>
+          <button onClick={signOut} className="flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold text-[#b17183] transition-colors hover:bg-[#2a101d] hover:text-[#ef92a6]"><LogOut size={15} /><span className="sidebar-label">Sign out</span></button>
         </div>
       </aside>
     </>
@@ -346,9 +348,10 @@ function AppHeader({ title, subtitle, onMenu }: { title: string; subtitle?: stri
 
 function DashboardLayout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  return <div className="min-h-screen bg-[#0f0a1a] text-white"><Sidebar mobileOpen={mobileOpen} closeMobile={() => setMobileOpen(false)} /><main className="dashboard-main min-h-screen px-5 py-6 sm:px-8 lg:ml-[270px] lg:px-10 lg:py-9 xl:px-14"><div className="mx-auto max-w-[1360px]">{children}</div></main><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></div>;
+  const [collapsed, setCollapsed] = useState(false);
+  useEffect(() => { const openMenu = () => setMobileOpen(true); window.addEventListener("fluxy:open-menu", openMenu); return () => window.removeEventListener("fluxy:open-menu", openMenu); }, []);
+  return <div className="min-h-screen bg-[#0f0a1a] text-white"><Sidebar mobileOpen={mobileOpen} closeMobile={() => setMobileOpen(false)} collapsed={collapsed} toggleCollapsed={() => setCollapsed((value) => !value)} /><main className={`dashboard-main min-h-screen px-5 py-6 sm:px-8 ${collapsed ? "lg:ml-[82px]" : "lg:ml-[270px]"} lg:px-10 lg:py-9 xl:px-14`}><div className="mx-auto max-w-[1360px]">{children}</div></main><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></div>;
 }
-
 function StatCard({ icon: Icon, label, value, meta, progress }: { icon: LucideIcon; label: string; value: string; meta: string; progress?: number }) {
   return <div className="stat-card"><div className="flex items-start justify-between"><div className="stat-icon"><Icon size={17} /></div>{progress !== undefined && <span className="text-[11px] font-semibold text-[#a855f7]">{progress}%</span>}</div><p className="mt-5 text-[11px] font-medium uppercase tracking-[0.1em] text-[#796d93]">{label}</p><p className="mt-1 font-display text-2xl font-semibold tracking-[-0.03em] text-white">{value}</p><p className="mt-1 text-[11px] text-[#837597]">{meta}</p>{progress !== undefined && <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-[#2d1f4e]"><div className="h-full rounded-full bg-gradient-to-r from-[#7c3aed] to-[#c084fc]" style={{ width: `${progress}%` }} /></div>}</div>;
 }
