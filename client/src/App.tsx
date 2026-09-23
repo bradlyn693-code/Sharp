@@ -26,6 +26,7 @@ import {
   Search,
   Server,
   Settings,
+  Tv,
   ShieldCheck,
   Sparkles,
   WalletCards,
@@ -76,6 +77,7 @@ const vpsPlans = [
 const navItems: { label: string; href: string; icon: LucideIcon; soon?: boolean }[] = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "VPS", href: "/vps", icon: Cloud },
+  { label: "Channels", href: "/channels", icon: Tv },
   { label: "My Servers", href: "/servers", icon: Server },
   { label: "Wallet", href: "/wallet", icon: WalletCards },
   { label: "Deployments", href: "#", icon: Zap, soon: true },
@@ -327,14 +329,14 @@ function Sidebar({ mobileOpen, closeMobile, collapsed, toggleCollapsed }: { mobi
         <div className={`mb-8 flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-3"}`}><Brand compact={collapsed} /><button onClick={() => { if (window.matchMedia("(min-width: 1024px)").matches) toggleCollapsed(); else closeMobile(); }} className="icon-button" aria-label={mobileOpen ? "Close sidebar" : collapsed ? "Expand sidebar" : "Collapse sidebar"} title={mobileOpen ? "Close sidebar" : collapsed ? "Expand sidebar" : "Collapse sidebar"}>{mobileOpen ? <X size={17} /> : collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}</button></div>
         <div className="sidebar-section mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Workspace</div>
         <nav className="space-y-1">
-          {navItems.slice(0, 4).map((item) => {
+          {navItems.slice(0, 5).map((item) => {
             const active = location === item.href || (item.href === "/dashboard" && location === "/");
             return <Link key={item.label} href={item.href} onClick={closeMobile} className={`nav-item ${active ? "nav-item-active" : ""}`}><item.icon size={17} strokeWidth={active ? 2.2 : 1.8} /><span className="sidebar-label">{item.label}</span>{active && <span className="nav-active-line" />}</Link>;
           })}
         </nav>
         <div className="sidebar-section mb-3 mt-9 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Manage</div>
         <nav className="space-y-1">
-          {navItems.slice(4).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span className="sidebar-label">{item.label}</span><span className="sidebar-label ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
+          {navItems.slice(5).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span className="sidebar-label">{item.label}</span><span className="sidebar-label ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
         </nav>
         <div className="mt-auto sidebar-user-area">
           <button onClick={signOut} className="flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold text-[#b17183] transition-colors hover:bg-[#2a101d] hover:text-[#ef92a6]"><LogOut size={15} /><span className="sidebar-label">Sign out</span></button>
@@ -434,6 +436,36 @@ function ServersPage() {
   return <DashboardLayout><AppHeader title="My Servers" subtitle="Keep an eye on every environment from one calm workspace." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />{servers.length === 0 ? <div className="empty-panel"><div className="server-illustration"><div className="server-rack"><span /><span /><span /></div><div className="server-pulse" /></div><h2 className="mt-7 font-display text-2xl font-semibold tracking-[-0.035em] text-white">No servers yet</h2><p className="mt-2 max-w-sm text-sm leading-6 text-[#877a9f]">Your infrastructure will show up here once you activate your first plan. Ready when you are.</p><Link href="/vps" className="primary-button mt-7">Explore plans <ArrowRight size={15} /></Link></div> : <div><div className="mb-5 flex items-end justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Provisioned infrastructure</p><h2 className="mt-2 font-display text-xl font-semibold text-white">Your active servers</h2></div><Link href="/vps" className="primary-button">Add server <Plus size={15} /></Link></div><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{servers.map((server) => <div key={server.id} className="server-card"><div className="flex items-center justify-between"><div className="flex items-center gap-3"><div className="server-status-icon"><Server size={17} /></div><div><h3 className="text-sm font-semibold text-white">{server.plan}</h3><p className="mt-1 text-[11px] text-[#807294]">{server.type} · {server.date}</p></div></div><span className="status-pill">Active</span></div><div className="mt-5 grid grid-cols-2 gap-3 border-t border-white/[0.07] pt-4"><div><p className="text-[10px] uppercase tracking-wider text-[#766a8c]">Memory</p><p className="mt-1 text-sm font-semibold text-white">{server.ram} DDR4</p></div><div><p className="text-[10px] uppercase tracking-wider text-[#766a8c]">Monthly</p><p className="mt-1 text-sm font-semibold text-white">KSH {server.price}</p></div></div></div>)}</div></div>}</DashboardLayout>;
 }
 
+function ChannelsPage() {
+  const plans = [
+    { id: "2k", label: "2k followers 🛸", price: "850" },
+    { id: "5k", label: "5k followers 🏈", price: "1300" },
+    { id: "7k", label: "7k followers ⛵", price: "2200" },
+  ];
+  const [showPay, setShowPay] = useState<(typeof plans)[number] | null>(null);
+
+  function pay() {
+    if (!showPay) return;
+    const result = activatePlan({ name: showPay.label, price: showPay.price, ram: "—", type: "Channel" });
+    if (!result.success) {
+      toast.error("Insufficient wallet balance", { description: `Add KES ${(Number(showPay.price) - result.balance).toFixed(2)} to purchase this channel plan.` });
+      return;
+    }
+    setShowPay(null);
+    toast.success("Channel plan activated", { description: `${showPay.label} is now available in My Servers.` });
+  }
+
+  return <DashboardLayout><AppHeader title="Channels" subtitle="Grow your audience with ready-to-activate channel plans." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />
+    <div className="mx-auto max-w-[1000px]">
+      <div className="mb-6"><p className="eyebrow"><span className="eyebrow-dot" /> Audience growth</p><h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-white">Channel plans</h2><p className="mt-2 text-sm text-[#877a9f]">Choose a follower package and activate it from your wallet balance.</p></div>
+      <div className="grid gap-5 md:grid-cols-3">
+        {plans.map((plan) => <div key={plan.id} className="plan-card group text-center"><div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#24133f] text-2xl transition-transform duration-200 group-hover:-translate-y-1">{plan.label.split(" ").at(-1)}</div><h3 className="text-base font-bold text-white">{plan.label.slice(0, -2)}</h3><p className="mt-3 font-display text-3xl font-semibold text-white"><span className="mr-1 text-xs font-medium text-[#8a7ca1]">KES</span>{plan.price}</p><button onClick={() => setShowPay(plan)} className="primary-button mt-6 w-full">Buy now <ArrowRight size={15} /></button></div>)}
+      </div>
+    </div>
+    {showPay && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close channel payment modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowPay(null)} /><div className="relative w-full max-w-[360px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowPay(null)} className="icon-button absolute right-4 top-4" aria-label="Close channel payment modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">📺</div><h3 className="text-base font-bold text-white">{showPay.label}</h3><p className="mt-1 text-sm text-[#a99abb]">KES {showPay.price}</p></div><div className="flex gap-3"><button onClick={() => setShowPay(null)} className="secondary-button flex-1">Cancel</button><button onClick={pay} className="primary-button flex-1">Pay KES {showPay.price}</button></div></div></div>}
+  </DashboardLayout>;
+}
+
 function WalletPage() {
   const paystackUrl = "https://paystack.shop/pay/o2dkau16m7";
   const [showPay, setShowPay] = useState(false);
@@ -456,7 +488,7 @@ function WalletPage() {
 }
 
 function App() {
-  return <><Switch><Route path="/" component={() => <RedirectTo href={isLoggedIn() ? "/dashboard" : "/login"} />} /><Route path="/login" component={LoginPage} /><Route path="/signup" component={SignupPage} /><Route path="/reset-password" component={ResetPasswordPage} /><Route path="/dashboard"><RequireAuth><DashboardPage /></RequireAuth></Route><Route path="/vps"><RequireAuth><VpsPage /></RequireAuth></Route><Route path="/servers"><RequireAuth><ServersPage /></RequireAuth></Route><Route path="/wallet"><RequireAuth><WalletPage /></RequireAuth></Route><Route><RedirectTo href="/login" /></Route></Switch><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></>;
+  return <><Switch><Route path="/" component={() => <RedirectTo href={isLoggedIn() ? "/dashboard" : "/login"} />} /><Route path="/login" component={LoginPage} /><Route path="/signup" component={SignupPage} /><Route path="/reset-password" component={ResetPasswordPage} /><Route path="/dashboard"><RequireAuth><DashboardPage /></RequireAuth></Route><Route path="/vps"><RequireAuth><VpsPage /></RequireAuth></Route><Route path="/channels"><RequireAuth><ChannelsPage /></RequireAuth></Route><Route path="/servers"><RequireAuth><ServersPage /></RequireAuth></Route><Route path="/wallet"><RequireAuth><WalletPage /></RequireAuth></Route><Route><RedirectTo href="/login" /></Route></Switch><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></>;
 }
 
 function RedirectTo({ href }: { href: string }) {
