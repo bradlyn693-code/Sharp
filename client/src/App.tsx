@@ -84,7 +84,7 @@ const navItems: { label: string; href: string; icon: LucideIcon; soon?: boolean 
 ];
 
 function isLoggedIn() {
-  return typeof window !== "undefined" && localStorage.getItem("fluxy_logged") === "true";
+  return typeof window !== "undefined" && (localStorage.getItem("fluxy_logged") === "true" || sessionStorage.getItem("fluxy_logged") === "true");
 }
 
 function activatePlan({ name, price, ram, type }: { name: string; price: string; ram: string; type: string }) {
@@ -193,6 +193,7 @@ function LoginPage() {
   const [, navigate] = useLocation();
   const [email, setEmail] = useState(localStorage.getItem("fluxy_email") ?? "");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(localStorage.getItem("fluxy_remember") !== "false");
 
   useEffect(() => {
     if (isLoggedIn()) navigate("/dashboard");
@@ -206,11 +207,22 @@ function LoginPage() {
       toast.error("Account not found", { description: "Create an account first or check your email and password." });
       return;
     }
-    localStorage.setItem("fluxy_logged", "true");
-    localStorage.setItem("fluxy_email", account.email);
+    localStorage.removeItem("fluxy_logged");
+    sessionStorage.removeItem("fluxy_logged");
+    if (remember) {
+      localStorage.setItem("fluxy_logged", "true");
+      localStorage.setItem("fluxy_remember", "true");
+      localStorage.setItem("fluxy_email", account.email);
+    } else {
+      sessionStorage.setItem("fluxy_logged", "true");
+      localStorage.setItem("fluxy_remember", "false");
+      localStorage.removeItem("fluxy_email");
+    }
     localStorage.setItem("fluxy_name", account.name);
+    localStorage.setItem("fluxy_login_time", Date.now().toString());
+    sessionStorage.setItem("fluxy_login_time", Date.now().toString());
     navigate("/dashboard");
-    toast.success("Welcome back to Fluxy Tech", { description: "Your infrastructure workspace is ready." });
+    toast.success("Welcome back to Fluxy Tech", { description: remember ? "You will stay signed in on this device." : "You are signed in for this session." });
   }
 
   return (
@@ -220,11 +232,11 @@ function LoginPage() {
         <div>
           <Field label="Password" type="password" placeholder="Enter your password" value={password} onChange={setPassword} />
           <div className="mt-3 flex items-center justify-between text-xs">
-            <label className="flex items-center gap-2 text-[#8b7aaa]"><input type="checkbox" className="purple-checkbox" defaultChecked /> Remember me</label>
+            <label className="flex items-center gap-2 text-[#8b7aaa]"><input type="checkbox" className="purple-checkbox" checked={remember} onChange={(event) => setRemember(event.target.checked)} /> Remember me</label>
             <Link href="/reset-password" className="font-semibold text-[#b47cff] transition-colors hover:text-white">Forgot password?</Link>
           </div>
         </div>
-        <button className="primary-button mt-3 w-full" type="submit">Sign in <ArrowRight size={16} /></button>
+        <button className="primary-button mt-3 w-full" type="submit">Sign in &amp; Stay Logged <ArrowRight size={16} /></button>
       </form>
       <p className="mt-7 text-center text-sm text-[#8b7aaa]">Don&apos;t have an account? <Link href="/signup" className="font-semibold text-[#c08aff] hover:text-white">Create one</Link></p>
     </AuthShell>
@@ -249,6 +261,8 @@ function SignupPage() {
     accounts.push({ name: normalizedName, email: normalizedEmail, password });
     localStorage.setItem("fluxy_accounts", JSON.stringify(accounts));
     localStorage.setItem("fluxy_logged", "true");
+    sessionStorage.setItem("fluxy_logged", "true");
+    localStorage.setItem("fluxy_remember", "true");
     localStorage.setItem("fluxy_email", normalizedEmail);
     localStorage.setItem("fluxy_name", normalizedName);
     navigate("/dashboard");
@@ -298,9 +312,13 @@ function Sidebar({ mobileOpen, closeMobile, collapsed, toggleCollapsed }: { mobi
   const [location, navigate] = useLocation();
   function signOut() {
     localStorage.removeItem("fluxy_logged");
+    sessionStorage.removeItem("fluxy_logged");
     localStorage.removeItem("fluxy_email");
     localStorage.removeItem("fluxy_name");
     localStorage.removeItem("fluxy_password");
+    localStorage.removeItem("fluxy_remember");
+    localStorage.removeItem("fluxy_login_time");
+    sessionStorage.removeItem("fluxy_login_time");
     navigate("/login");
     toast.success("You have been signed out");
   }
