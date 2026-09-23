@@ -309,6 +309,10 @@ function StatCard({ icon: Icon, label, value, meta, progress }: { icon: LucideIc
 
 function PlanCard({ plan }: { plan: (typeof plans)[number] }) {
   const [, navigate] = useLocation();
+  function markPaid() {
+    localStorage.setItem("fluxy_paid_plan", plan.name);
+    toast.success("Payment marked as paid", { description: `${plan.name} is ready for verification.` });
+  }
   function buy() {
     localStorage.setItem("fluxy_selected_plan", plan.name);
     toast.success(`${plan.name} plan selected`, { description: "Your plan is ready to activate from the wallet." });
@@ -320,7 +324,7 @@ function PlanCard({ plan }: { plan: (typeof plans)[number] }) {
     <div className="mt-5 flex items-end gap-1"><span className="text-xs font-semibold text-[#8b7aaa]">{plan.currency}</span><span className="font-display text-[28px] font-semibold tracking-[-0.045em] text-white">{plan.price}</span><span className="mb-1 text-[11px] text-[#776a8f]">/ monthly</span></div>
     <div className="my-5 h-px bg-[#2d1f4e]" />
     <div className="space-y-3">{plan.specs.map(([label, value]) => <div key={label} className="flex items-center justify-between text-xs"><span className="text-[#887b9d]">{label}</span><span className="font-medium text-[#eee8fb]">{value}</span></div>)}</div>{"features" in plan && plan.features && <div className="admin-features">{plan.features.slice(0, 4).map((feature) => <span key={feature}>{feature}</span>)}<span className="admin-feature-more">+6 more admin capabilities</span></div>}
-    <button onClick={buy} className={`buy-button mt-6 w-full ${plan.popular ? "buy-button-featured" : ""}`}>Buy now <ArrowRight size={14} /></button>
+    <div className="plan-actions mt-6"><button onClick={buy} className={`buy-button w-full ${plan.popular ? "buy-button-featured" : ""}`}>Buy now <ArrowRight size={14} /></button><button onClick={markPaid} className="paid-button w-full">I have paid <Check size={14} /></button></div>
   </article>;
 }
 
@@ -334,6 +338,10 @@ function DashboardPage() {
 function VpsPage() {
   const [, navigate] = useLocation();
 
+  function markPaid(plan: (typeof vpsPlans)[number]) {
+    localStorage.setItem("fluxy_paid_plan", plan.name);
+    toast.success("Payment marked as paid", { description: `${plan.name} is ready for verification.` });
+  }
   function choosePlan(plan: (typeof vpsPlans)[number]) {
     localStorage.setItem("fluxy_pending_vps", JSON.stringify({ name: plan.name, ram: plan.ram, price: plan.price }));
     toast.success("Plan ready in Wallet", { description: "Complete funding from the Wallet checkout." });
@@ -342,7 +350,7 @@ function VpsPage() {
 
   return <DashboardLayout><AppHeader title="VPS" subtitle="NVMe SSD · DDoS protected · Instant setup · Kenya location" onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />
     <div className="mb-7 flex items-end justify-between gap-4"><div><p className="eyebrow"><span className="eyebrow-dot" /> Virtual private servers</p><h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.03em] text-white">Power without the complexity</h2></div><span className="hidden items-center gap-2 text-xs text-[#8b7aaa] sm:flex"><span className="status-dot" /> All systems operational</span></div>
-    <div className="vps-grid">{vpsPlans.map((plan) => <article key={plan.id} className={`vps-card ${plan.popular ? "vps-card-popular" : ""}`}>{plan.popular && <div className="vps-popular"><Sparkles size={12} /> POPULAR</div>}<div className="flex items-start gap-3"><div className="vps-emoji">{plan.emoji}</div><div><h3 className="text-[18px] font-bold text-white">{plan.name}</h3><p className="mt-1 text-xs text-[#a855f7]">{plan.vcpu} · {plan.storage}</p></div></div><div className="mt-5 flex items-baseline gap-2"><span className="font-display text-[27px] font-semibold tracking-[-0.04em] text-white">KSH {plan.price}</span><span className="text-xs text-[#6b5a8a]">/ monthly</span></div><p className="mt-2 min-h-[40px] text-[13px] leading-5 text-[#b8a9d9]">{plan.desc}</p><div className="mt-4 rounded-[10px] border border-[#2d1f4e]/70 bg-[#0f0a1a] px-3 py-2"><p className="text-[11px] font-semibold text-[#c084fc]">{plan.bestFor}</p></div><div className="my-4 h-px bg-[#2d1f4e]" /><div className="mb-5 flex-1 space-y-3"><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">RAM</span><span className="text-[13px] font-bold text-white">{plan.ram} DDR4</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Disk</span><span className="text-[13px] text-white">{plan.storage}</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Bandwidth</span><span className="text-[13px] text-white">{plan.bandwidth}</span></div></div><button onClick={() => choosePlan(plan)} className={`buy-button w-full ${plan.popular ? "buy-button-featured" : ""}`}>CONTINUE TO WALLET · KSH {plan.price}</button></article>)}</div>
+    <div className="vps-grid">{vpsPlans.map((plan) => <article key={plan.id} className={`vps-card ${plan.popular ? "vps-card-popular" : ""}`}>{plan.popular && <div className="vps-popular"><Sparkles size={12} /> POPULAR</div>}<div className="flex items-start gap-3"><div className="vps-emoji">{plan.emoji}</div><div><h3 className="text-[18px] font-bold text-white">{plan.name}</h3><p className="mt-1 text-xs text-[#a855f7]">{plan.vcpu} · {plan.storage}</p></div></div><div className="mt-5 flex items-baseline gap-2"><span className="font-display text-[27px] font-semibold tracking-[-0.04em] text-white">KSH {plan.price}</span><span className="text-xs text-[#6b5a8a]">/ monthly</span></div><p className="mt-2 min-h-[40px] text-[13px] leading-5 text-[#b8a9d9]">{plan.desc}</p><div className="mt-4 rounded-[10px] border border-[#2d1f4e]/70 bg-[#0f0a1a] px-3 py-2"><p className="text-[11px] font-semibold text-[#c084fc]">{plan.bestFor}</p></div><div className="my-4 h-px bg-[#2d1f4e]" /><div className="mb-5 flex-1 space-y-3"><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">RAM</span><span className="text-[13px] font-bold text-white">{plan.ram} DDR4</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Disk</span><span className="text-[13px] text-white">{plan.storage}</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Bandwidth</span><span className="text-[13px] text-white">{plan.bandwidth}</span></div></div><div className="plan-actions"><button onClick={() => choosePlan(plan)} className={`buy-button w-full ${plan.popular ? "buy-button-featured" : ""}`}>CONTINUE TO WALLET · KSH {plan.price}</button><button onClick={() => markPaid(plan)} className="paid-button w-full">I have paid <Check size={14} /></button></div></article>)}</div>
   </DashboardLayout>;
 }
 
