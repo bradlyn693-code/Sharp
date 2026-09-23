@@ -122,3 +122,6 @@ table th { padding: 16px 18px; border-bottom: 1px solid #2d1f4e; color: #766a8c;
 .wallet-hero-glow { position: absolute; right: -100px; top: -100px; width: 300px; height: 300px; border-radius: 9999px; background: rgba(124,58,237,.12); filter: blur(60px); }
 .wallet-pay-modal { animation: walletModalIn .2s var(--ease-out); }
 @keyframes walletModalIn { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.pending-plan-banner { display: flex; align-items: center; justify-content: space-between; gap: 18px; border: 1px solid #6d43a1; border-radius: 15px; background: linear-gradient(105deg, rgba(124,58,237,.18), rgba(26,16,46,.92)); padding: 17px 18px; box-shadow: 0 10px 25px rgba(0,0,0,.12); }
+@media (max-width: 640px) { .pending-plan-banner { align-items: flex-start; flex-direction: column; } }

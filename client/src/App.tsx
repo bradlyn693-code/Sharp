@@ -381,25 +381,17 @@ function DashboardPage() {
 
 
 function VpsPage() {
-  const [showPay, setShowPay] = useState<(typeof vpsPlans)[number] | null>(null);
-  const [purchased, setPurchased] = useState<string | null>(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [, navigate] = useLocation();
 
-  function confirmPayment() {
-    if (!showPay) return;
-    const servers = JSON.parse(localStorage.getItem("fluxy_servers") || "[]");
-    servers.push({ id: Date.now(), plan: showPay.name, ram: showPay.ram, price: showPay.price, date: new Date().toLocaleDateString(), type: "VPS" });
-    localStorage.setItem("fluxy_servers", JSON.stringify(servers));
-    setPurchased(showPay.name);
-    setShowPay(null);
-    toast.success(`${showPay.name} purchased`, { description: "Your VPS has been added to My Servers." });
-    window.setTimeout(() => setPurchased(null), 2500);
+  function choosePlan(plan: (typeof vpsPlans)[number]) {
+    localStorage.setItem("fluxy_pending_vps", JSON.stringify({ name: plan.name, ram: plan.ram, price: plan.price }));
+    toast.success("Plan ready in Wallet", { description: "Complete funding from the Wallet checkout." });
+    navigate("/wallet");
   }
 
   return <DashboardLayout><AppHeader title="VPS" subtitle="NVMe SSD · DDoS protected · Instant setup · Kenya location" onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />
     <div className="mb-7 flex items-end justify-between gap-4"><div><p className="eyebrow"><span className="eyebrow-dot" /> Virtual private servers</p><h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.03em] text-white">Power without the complexity</h2></div><span className="hidden items-center gap-2 text-xs text-[#8b7aaa] sm:flex"><span className="status-dot" /> All systems operational</span></div>
-    <div className="vps-grid">{vpsPlans.map((plan) => <article key={plan.id} className={`vps-card ${plan.popular ? "vps-card-popular" : ""}`}>{plan.popular && <div className="vps-popular"><Sparkles size={12} /> POPULAR</div>}<div className="flex items-start gap-3"><div className="vps-emoji">{plan.emoji}</div><div><h3 className="text-[18px] font-bold text-white">{plan.name}</h3><p className="mt-1 text-xs text-[#a855f7]">{plan.vcpu} · {plan.storage}</p></div></div><div className="mt-5 flex items-baseline gap-2"><span className="font-display text-[27px] font-semibold tracking-[-0.04em] text-white">KSH {plan.price}</span><span className="text-xs text-[#6b5a8a]">/ monthly</span></div><p className="mt-2 min-h-[40px] text-[13px] leading-5 text-[#b8a9d9]">{plan.desc}</p><div className="mt-4 rounded-[10px] border border-[#2d1f4e]/70 bg-[#0f0a1a] px-3 py-2"><p className="text-[11px] font-semibold text-[#c084fc]">{plan.bestFor}</p></div><div className="my-4 h-px bg-[#2d1f4e]" /><div className="mb-5 flex-1 space-y-3"><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">RAM</span><span className="text-[13px] font-bold text-white">{plan.ram} DDR4</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Disk</span><span className="text-[13px] text-white">{plan.storage}</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Bandwidth</span><span className="text-[13px] text-white">{plan.bandwidth}</span></div></div><button onClick={() => setShowPay(plan)} className={`buy-button w-full ${plan.popular ? "buy-button-featured" : ""}`}>{purchased === plan.name ? "✓ Purchased!" : `BUY NOW · KSH ${plan.price}`}</button></article>)}</div>
-    {showPay && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"><div className="w-full max-w-[420px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-7 shadow-2xl"><div className="mb-5 flex items-start justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Confirm purchase</p><h3 className="mt-3 text-[18px] font-bold text-white">{showPay.name}</h3></div><button className="icon-button" onClick={() => setShowPay(null)} aria-label="Close payment dialog"><X size={16} /></button></div><div className="mb-5 rounded-[12px] border border-[#2d1f4e] bg-[#0f0a1a] p-4"><div className="flex justify-between text-sm"><span className="text-[#8b7aaa]">Total</span><span className="font-bold text-white">KSH {showPay.price}/mo</span></div><div className="mt-3 flex justify-between text-xs"><span className="text-[#77698e]">Provisioning</span><span className="font-medium text-[#a855f7]">Instant</span></div></div><div className="flex gap-3"><button onClick={() => setShowPay(null)} className="flex-1 rounded-[12px] border border-[#2d1f4e] bg-[#0f0a1a] py-3 text-sm font-semibold text-[#b8a9d9]">Cancel</button><button onClick={confirmPayment} className="primary-button flex-1">Pay KSH {showPay.price}</button></div></div></div>}
+    <div className="vps-grid">{vpsPlans.map((plan) => <article key={plan.id} className={`vps-card ${plan.popular ? "vps-card-popular" : ""}`}>{plan.popular && <div className="vps-popular"><Sparkles size={12} /> POPULAR</div>}<div className="flex items-start gap-3"><div className="vps-emoji">{plan.emoji}</div><div><h3 className="text-[18px] font-bold text-white">{plan.name}</h3><p className="mt-1 text-xs text-[#a855f7]">{plan.vcpu} · {plan.storage}</p></div></div><div className="mt-5 flex items-baseline gap-2"><span className="font-display text-[27px] font-semibold tracking-[-0.04em] text-white">KSH {plan.price}</span><span className="text-xs text-[#6b5a8a]">/ monthly</span></div><p className="mt-2 min-h-[40px] text-[13px] leading-5 text-[#b8a9d9]">{plan.desc}</p><div className="mt-4 rounded-[10px] border border-[#2d1f4e]/70 bg-[#0f0a1a] px-3 py-2"><p className="text-[11px] font-semibold text-[#c084fc]">{plan.bestFor}</p></div><div className="my-4 h-px bg-[#2d1f4e]" /><div className="mb-5 flex-1 space-y-3"><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">RAM</span><span className="text-[13px] font-bold text-white">{plan.ram} DDR4</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Disk</span><span className="text-[13px] text-white">{plan.storage}</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Bandwidth</span><span className="text-[13px] text-white">{plan.bandwidth}</span></div></div><button onClick={() => choosePlan(plan)} className={`buy-button w-full ${plan.popular ? "buy-button-featured" : ""}`}>CONTINUE TO WALLET · KSH {plan.price}</button></article>)}</div>
   </DashboardLayout>;
 }
 
@@ -412,6 +404,7 @@ function WalletPage() {
   const paystackUrl = "https://paystack.shop/pay/o2dkau16m7";
   const [showPay, setShowPay] = useState(false);
   const [balance] = useState(() => Number(localStorage.getItem("fluxy_balance") || "0"));
+  const pendingPlan = JSON.parse(localStorage.getItem("fluxy_pending_vps") || "null") as { name: string; ram: string; price: string } | null;
   const txs = JSON.parse(localStorage.getItem("fluxy_txs") || "null") as { date: string; desc: string; amount: string }[] | null;
   const transactions = txs || [
     { date: "20 May 2026", desc: "Server renewal · Standard", amount: "-KES 100.00" },
@@ -428,6 +421,7 @@ function WalletPage() {
 
   return <DashboardLayout><AppHeader title="Wallet" subtitle="Manage your balance and transactions." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />
     <div className="mx-auto max-w-[1000px]">
+      {pendingPlan && <div className="pending-plan-banner mb-5"><div><p className="eyebrow"><span className="eyebrow-dot" /> VPS plan selected</p><p className="mt-2 text-sm font-semibold text-white">{pendingPlan.name} · KSH {pendingPlan.price}/month</p><p className="mt-1 text-xs text-[#8b7aaa]">Fund your wallet to complete this VPS purchase.</p></div><button onClick={() => setShowPay(true)} className="primary-button shrink-0">Add funds <ArrowRight size={14} /></button></div>}
       <div className="wallet-hero mb-6"><div className="wallet-hero-glow" /><div className="relative"><p className="text-[13px] font-medium text-[#a99abb]">Current balance</p><p className="mt-2 font-display text-[40px] font-semibold tracking-[-0.055em] text-white">KES {balance.toFixed(2)}</p><p className="mt-1 text-xs text-[#74678c]">Available for renewals &amp; purchases</p><button onClick={() => setShowPay(true)} className="primary-button mt-6">+ Add funds</button><p className="mt-3 text-[11px] text-[#6b5a8a]">Secure payment by Paystack · Instant credit</p></div></div>
       <div className="transaction-card overflow-hidden"><div className="flex items-center justify-between border-b border-[#2d1f4e] p-5"><h3 className="font-semibold text-white">Transaction history</h3><span className="text-xs text-[#6b5a8a]">{transactions.length} transactions</span></div><div className="divide-y divide-[#2d1f4e]/50">{transactions.map((tx, index) => <div key={`${tx.date}-${index}`} className="flex items-center justify-between p-4 transition-colors hover:bg-[#0f0a1a]/50"><div><p className="text-sm font-medium text-white">{tx.desc}</p><p className="mt-1 text-xs text-[#6b5a8a]">{tx.date}</p></div><p className={`text-sm font-semibold ${tx.amount.startsWith("+") ? "text-[#10b981]" : "text-white"}`}>{tx.amount}</p></div>)}</div></div>
     </div>
