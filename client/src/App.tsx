@@ -112,8 +112,17 @@ const plans = [
   },
 ] as const;
 
+const vpsPlans = [
+  { id: "vps-8", emoji: "🎱", name: "VPS 8GB RAM", ram: "8GB", price: "980", vcpu: "2 vCPU", storage: "50GB NVMe SSD", bandwidth: "2TB Transfer", ip: "1 Dedicated IP", desc: "Perfect for small businesses, WordPress sites & starter game servers.", bestFor: "Best for: Blogs, Small E-commerce, Minecraft 20 players", features: ["2 vCPU Xeon", "50GB NVMe SSD", "2TB Bandwidth", "DDoS Protection", "Instant Deploy"], popular: false },
+  { id: "vps-12", emoji: "🏈", name: "VPS 12GB RAM", ram: "12GB", price: "1600", vcpu: "3 vCPU", storage: "80GB NVMe SSD", bandwidth: "3TB Transfer", ip: "1 Dedicated IP", desc: "Balanced power for growing communities and medium traffic apps.", bestFor: "Best for: GTA Roleplay, Medium Businesses, WooCommerce", features: ["3 vCPU Xeon", "80GB NVMe SSD", "3TB Bandwidth", "Daily Backups", "Root Access"], popular: false },
+  { id: "vps-24", emoji: "⚾", name: "VPS 24GB RAM", ram: "24GB", price: "3500", vcpu: "6 vCPU", storage: "150GB NVMe SSD", bandwidth: "5TB Transfer", ip: "1 Dedicated IP + IPv6", desc: "High-performance workhorse — our most popular VPS for serious workloads.", bestFor: "Best for: Large MC Networks, SaaS Apps, High-Traffic Sites", features: ["6 vCPU Xeon Gold", "150GB NVMe SSD", "5TB Bandwidth", "Priority Support", "Free cPanel"], popular: true },
+  { id: "vps-48", emoji: "🏓", name: "VPS 48GB RAM", ram: "48GB", price: "4900", vcpu: "8 vCPU", storage: "300GB NVMe SSD", bandwidth: "Unmetered", ip: "2 Dedicated IPs", desc: "Enterprise-grade power for resource-heavy applications & virtualization.", bestFor: "Best for: Dedicated Game Hosting, Enterprise Apps, Video Streaming", features: ["8 vCPU Xeon Gold", "300GB NVMe SSD", "Unmetered Bandwidth", "24/7 Phone Support", "Free Migration"], popular: false },
+  { id: "vps-64", emoji: "⛳", name: "VPS 64GB RAM", ram: "64GB", price: "6000", vcpu: "12 vCPU", storage: "500GB NVMe SSD", bandwidth: "Unmetered", ip: "3 Dedicated IPs", desc: "Ultimate performance — no limits. Bare-metal like power in a VPS.", bestFor: "Best for: Large Enterprises, Private Cloud, Heavy Virtualization", features: ["12 vCPU Xeon Platinum", "500GB NVMe SSD", "Unmetered + 10Gbps Port", "Dedicated Support Agent", "Custom ISO"], popular: false },
+] as const;
+
 const navItems: { label: string; href: string; icon: LucideIcon; soon?: boolean }[] = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { label: "VPS", href: "/vps", icon: Cloud },
   { label: "My Servers", href: "/servers", icon: Server },
   { label: "Wallet", href: "/wallet", icon: WalletCards },
   { label: "Deployments", href: "#", icon: Zap, soon: true },
@@ -309,14 +318,14 @@ function Sidebar({ mobileOpen, closeMobile }: { mobileOpen: boolean; closeMobile
         <div className="mb-8 flex items-center justify-between px-3"><Brand /><button onClick={closeMobile} className="icon-button lg:hidden"><X size={17} /></button></div>
         <div className="mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Workspace</div>
         <nav className="space-y-1">
-          {navItems.slice(0, 3).map((item) => {
+          {navItems.slice(0, 4).map((item) => {
             const active = location === item.href || (item.href === "/dashboard" && location === "/");
             return <Link key={item.label} href={item.href} onClick={closeMobile} className={`nav-item ${active ? "nav-item-active" : ""}`}><item.icon size={17} strokeWidth={active ? 2.2 : 1.8} /><span>{item.label}</span>{active && <span className="nav-active-line" />}</Link>;
           })}
         </nav>
         <div className="mb-3 mt-9 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Manage</div>
         <nav className="space-y-1">
-          {navItems.slice(3).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span>{item.label}</span><span className="ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
+          {navItems.slice(4).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span>{item.label}</span><span className="ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
         </nav>
         <div className="mt-auto">
           <div className="mb-4 rounded-2xl border border-[#2d1f4e] bg-[#130b22] p-3">
@@ -367,8 +376,33 @@ function DashboardPage() {
   return <DashboardLayout><AppHeader title="Pricing & Plans" subtitle="Choose the perfect plan for your infrastructure · Upgrade anytime, cancel anytime" onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} /><div className="mb-7 grid gap-4 md:grid-cols-3"><StatCard icon={Server} label="Active servers" value="12 / 20" meta="+2 added this month" /><StatCard icon={WalletCards} label="Wallet balance" value="$1,240.50" meta="Available for renewals" /><StatCard icon={Activity} label="Monthly usage" value="78%" meta="of Pro plan limit" progress={78} /></div><section><div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Pick your capacity</p><h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.03em] text-white">Plans that scale with you</h2></div><label className="dashboard-filter"><Search size={14} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter plans" /></label></div><div className="plan-grid">{filteredPlans.map((plan) => <PlanCard key={plan.name} plan={plan} />)}</div>{filteredPlans.length === 0 && <div className="empty-search"><Search size={22} /><p>No plans match “{query}”.</p></div>}</section></DashboardLayout>;
 }
 
+
+function VpsPage() {
+  const [showPay, setShowPay] = useState<(typeof vpsPlans)[number] | null>(null);
+  const [purchased, setPurchased] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  function confirmPayment() {
+    if (!showPay) return;
+    const servers = JSON.parse(localStorage.getItem("fluxy_servers") || "[]");
+    servers.push({ id: Date.now(), plan: showPay.name, ram: showPay.ram, price: showPay.price, date: new Date().toLocaleDateString(), type: "VPS" });
+    localStorage.setItem("fluxy_servers", JSON.stringify(servers));
+    setPurchased(showPay.name);
+    setShowPay(null);
+    toast.success(`${showPay.name} purchased`, { description: "Your VPS has been added to My Servers." });
+    window.setTimeout(() => setPurchased(null), 2500);
+  }
+
+  return <DashboardLayout><AppHeader title="VPS" subtitle="NVMe SSD · DDoS protected · Instant setup · Kenya location" onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />
+    <div className="mb-7 flex items-end justify-between gap-4"><div><p className="eyebrow"><span className="eyebrow-dot" /> Virtual private servers</p><h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.03em] text-white">Power without the complexity</h2></div><span className="hidden items-center gap-2 text-xs text-[#8b7aaa] sm:flex"><span className="status-dot" /> All systems operational</span></div>
+    <div className="vps-grid">{vpsPlans.map((plan) => <article key={plan.id} className={`vps-card ${plan.popular ? "vps-card-popular" : ""}`}>{plan.popular && <div className="vps-popular"><Sparkles size={12} /> POPULAR</div>}<div className="flex items-start gap-3"><div className="vps-emoji">{plan.emoji}</div><div><h3 className="text-[18px] font-bold text-white">{plan.name}</h3><p className="mt-1 text-xs text-[#a855f7]">{plan.vcpu} · {plan.storage}</p></div></div><div className="mt-5 flex items-baseline gap-2"><span className="font-display text-[27px] font-semibold tracking-[-0.04em] text-white">KSH {plan.price}</span><span className="text-xs text-[#6b5a8a]">/ monthly</span></div><p className="mt-2 min-h-[40px] text-[13px] leading-5 text-[#b8a9d9]">{plan.desc}</p><div className="mt-4 rounded-[10px] border border-[#2d1f4e]/70 bg-[#0f0a1a] px-3 py-2"><p className="text-[11px] font-semibold text-[#c084fc]">{plan.bestFor}</p></div><div className="my-4 h-px bg-[#2d1f4e]" /><div className="mb-5 flex-1 space-y-3"><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">RAM</span><span className="text-[13px] font-bold text-white">{plan.ram} DDR4</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Disk</span><span className="text-[13px] text-white">{plan.storage}</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Bandwidth</span><span className="text-[13px] text-white">{plan.bandwidth}</span></div></div><button onClick={() => setShowPay(plan)} className={`buy-button w-full ${plan.popular ? "buy-button-featured" : ""}`}>{purchased === plan.name ? "✓ Purchased!" : `BUY NOW · KSH ${plan.price}`}</button></article>)}</div>
+    {showPay && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"><div className="w-full max-w-[420px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-7 shadow-2xl"><div className="mb-5 flex items-start justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Confirm purchase</p><h3 className="mt-3 text-[18px] font-bold text-white">{showPay.name}</h3></div><button className="icon-button" onClick={() => setShowPay(null)} aria-label="Close payment dialog"><X size={16} /></button></div><div className="mb-5 rounded-[12px] border border-[#2d1f4e] bg-[#0f0a1a] p-4"><div className="flex justify-between text-sm"><span className="text-[#8b7aaa]">Total</span><span className="font-bold text-white">KSH {showPay.price}/mo</span></div><div className="mt-3 flex justify-between text-xs"><span className="text-[#77698e]">Provisioning</span><span className="font-medium text-[#a855f7]">Instant</span></div></div><div className="flex gap-3"><button onClick={() => setShowPay(null)} className="flex-1 rounded-[12px] border border-[#2d1f4e] bg-[#0f0a1a] py-3 text-sm font-semibold text-[#b8a9d9]">Cancel</button><button onClick={confirmPayment} className="primary-button flex-1">Pay KSH {showPay.price}</button></div></div></div>}
+  </DashboardLayout>;
+}
+
 function ServersPage() {
-  return <DashboardLayout><AppHeader title="My Servers" subtitle="Keep an eye on every environment from one calm workspace." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} /><div className="empty-panel"><div className="server-illustration"><div className="server-rack"><span /><span /><span /></div><div className="server-pulse" /></div><h2 className="mt-7 font-display text-2xl font-semibold tracking-[-0.035em] text-white">No servers yet</h2><p className="mt-2 max-w-sm text-sm leading-6 text-[#877a9f]">Your infrastructure will show up here once you activate your first plan. Ready when you are.</p><Link href="/dashboard" className="primary-button mt-7">Buy a plan <ArrowRight size={15} /></Link></div></DashboardLayout>;
+  const servers = JSON.parse(localStorage.getItem("fluxy_servers") || "[]") as { id: number; plan: string; ram: string; price: string; date: string; type: string }[];
+  return <DashboardLayout><AppHeader title="My Servers" subtitle="Keep an eye on every environment from one calm workspace." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />{servers.length === 0 ? <div className="empty-panel"><div className="server-illustration"><div className="server-rack"><span /><span /><span /></div><div className="server-pulse" /></div><h2 className="mt-7 font-display text-2xl font-semibold tracking-[-0.035em] text-white">No servers yet</h2><p className="mt-2 max-w-sm text-sm leading-6 text-[#877a9f]">Your infrastructure will show up here once you activate your first plan. Ready when you are.</p><Link href="/vps" className="primary-button mt-7">Explore VPS plans <ArrowRight size={15} /></Link></div> : <div><div className="mb-5 flex items-end justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Provisioned infrastructure</p><h2 className="mt-2 font-display text-xl font-semibold text-white">Your active servers</h2></div><Link href="/vps" className="primary-button">Add server <Plus size={15} /></Link></div><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{servers.map((server) => <div key={server.id} className="server-card"><div className="flex items-center justify-between"><div className="flex items-center gap-3"><div className="server-status-icon"><Server size={17} /></div><div><h3 className="text-sm font-semibold text-white">{server.plan}</h3><p className="mt-1 text-[11px] text-[#807294]">{server.type} · {server.date}</p></div></div><span className="status-pill">Active</span></div><div className="mt-5 grid grid-cols-2 gap-3 border-t border-white/[0.07] pt-4"><div><p className="text-[10px] uppercase tracking-wider text-[#766a8c]">Memory</p><p className="mt-1 text-sm font-semibold text-white">{server.ram} DDR4</p></div><div><p className="text-[10px] uppercase tracking-wider text-[#766a8c]">Monthly</p><p className="mt-1 text-sm font-semibold text-white">KSH {server.price}</p></div></div></div>)}</div></div>}</DashboardLayout>;
 }
 
 function WalletPage() {
@@ -378,7 +412,7 @@ function WalletPage() {
 }
 
 function App() {
-  return <><Switch><Route path="/" component={() => <RedirectTo href={isLoggedIn() ? "/dashboard" : "/login"} />} /><Route path="/login" component={LoginPage} /><Route path="/signup" component={SignupPage} /><Route path="/reset-password" component={ResetPasswordPage} /><Route path="/dashboard"><RequireAuth><DashboardPage /></RequireAuth></Route><Route path="/servers"><RequireAuth><ServersPage /></RequireAuth></Route><Route path="/wallet"><RequireAuth><WalletPage /></RequireAuth></Route><Route><RedirectTo href="/login" /></Route></Switch><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></>;
+  return <><Switch><Route path="/" component={() => <RedirectTo href={isLoggedIn() ? "/dashboard" : "/login"} />} /><Route path="/login" component={LoginPage} /><Route path="/signup" component={SignupPage} /><Route path="/reset-password" component={ResetPasswordPage} /><Route path="/dashboard"><RequireAuth><DashboardPage /></RequireAuth></Route><Route path="/vps"><RequireAuth><VpsPage /></RequireAuth></Route><Route path="/servers"><RequireAuth><ServersPage /></RequireAuth></Route><Route path="/wallet"><RequireAuth><WalletPage /></RequireAuth></Route><Route><RedirectTo href="/login" /></Route></Switch><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></>;
 }
 
 function RedirectTo({ href }: { href: string }) {

@@ -99,3 +99,13 @@ table th { padding: 16px 18px; border-bottom: 1px solid #2d1f4e; color: #766a8c;
 @media (max-width: 1100px) { .plan-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) { .plan-grid { grid-template-columns: 1fr; } .search-field { width: 130px; } .empty-panel { min-height: 440px; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+.vps-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.vps-card { position: relative; display: flex; min-height: 430px; flex-direction: column; border: 1px solid #2d1f4e; border-radius: 16px; background: linear-gradient(145deg, rgba(26,16,46,.98), rgba(21,12,37,.86)); padding: 22px; box-shadow: 0 10px 25px rgba(0,0,0,.08); transition: border-color 200ms var(--ease-out), box-shadow 200ms var(--ease-out), transform 200ms var(--ease-out); }
+.vps-card:hover { border-color: #7c3aed; box-shadow: 0 16px 40px rgba(0,0,0,.22), 0 0 26px rgba(124,58,237,.14); transform: translateY(-3px); }
+.vps-card-popular { border-color: #8b5cf6; background: radial-gradient(ellipse 110% 60% at 100% 0%, rgba(124,58,237,.17), transparent 65%), linear-gradient(145deg, rgba(35,20,60,.98), rgba(21,12,37,.9)); box-shadow: 0 0 0 1px rgba(168,85,247,.18), 0 0 35px rgba(124,58,237,.1); }
+.vps-popular { position: absolute; top: -12px; left: 22px; display: flex; align-items: center; gap: 5px; border: 1px solid rgba(216,180,254,.35); border-radius: 7px; background: linear-gradient(105deg, #7c3aed, #a855f7); padding: 5px 9px; color: white; font-size: 9px; font-weight: 800; letter-spacing: .08em; box-shadow: 0 4px 14px rgba(124,58,237,.28); }
+.vps-emoji { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid #2d1f4e; border-radius: 12px; background: #0f0a1a; font-size: 20px; }
+.server-card { border: 1px solid #2d1f4e; border-radius: 16px; background: linear-gradient(145deg, rgba(26,16,46,.98), rgba(21,12,37,.86)); padding: 20px; transition: border-color 180ms var(--ease-out), transform 180ms var(--ease-out); }.server-card:hover { border-color: #65428e; transform: translateY(-2px); }.server-status-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: rgba(110,231,183,.1); color: #6ee7b7; }
+@media (max-width: 1100px) { .vps-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .vps-grid { grid-template-columns: 1fr; } .vps-card { min-height: auto; } }
