@@ -312,13 +312,11 @@ function Sidebar({ mobileOpen, closeMobile, collapsed, toggleCollapsed }: { mobi
   const [location, navigate] = useLocation();
   function signOut() {
     localStorage.removeItem("fluxy_logged");
-    sessionStorage.removeItem("fluxy_logged");
-    localStorage.removeItem("fluxy_email");
-    localStorage.removeItem("fluxy_name");
-    localStorage.removeItem("fluxy_password");
-    localStorage.removeItem("fluxy_remember");
     localStorage.removeItem("fluxy_login_time");
-    sessionStorage.removeItem("fluxy_login_time");
+    sessionStorage.removeItem("fluxy_logged");
+    if (localStorage.getItem("fluxy_remember") !== "true") {
+      localStorage.removeItem("fluxy_email");
+    }
     navigate("/login");
     toast.success("You have been signed out");
   }
