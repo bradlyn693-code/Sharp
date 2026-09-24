@@ -76,14 +76,14 @@ const vpsPlans = [
   { id: "vps-64", emoji: "⛳", name: "VPS 64GB RAM", ram: "64GB", price: "6000", vcpu: "12 vCPU", storage: "500GB NVMe SSD", bandwidth: "Unmetered", ip: "3 Dedicated IPs", desc: "Ultimate performance — no limits. Bare-metal like power in a VPS.", bestFor: "Best for: Large Enterprises, Private Cloud, Heavy Virtualization", features: ["12 vCPU Xeon Platinum", "500GB NVMe SSD", "Unmetered + 10Gbps Port", "Dedicated Support Agent", "Custom ISO"], popular: false },
 ] as const;
 
-const navItems: { label: string; href: string; icon: LucideIcon; soon?: boolean }[] = [
-  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { label: "VPS", href: "/vps", icon: Cloud },
-  { label: "Channels", href: "/channels", icon: Tv },
-  { label: "Foreign Numbers", href: "/foreign-numbers", icon: Globe2 },
-  { label: "Online Jobs", href: "/online-jobs", icon: BriefcaseBusiness },
-  { label: "My Servers", href: "/servers", icon: Server },
-  { label: "Wallet", href: "/wallet", icon: WalletCards },
+const navItems: { label: string; href: string; icon: LucideIcon; emoji?: string; soon?: boolean }[] = [
+  { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, emoji: "🏠" },
+  { label: "VPS", href: "/vps", icon: Cloud, emoji: "🖥️" },
+  { label: "Channels", href: "/channels", icon: Tv, emoji: "📺" },
+  { label: "Foreign Numbers", href: "/foreign-numbers", icon: Globe2, emoji: "🌍" },
+  { label: "Online Jobs", href: "/online-jobs", icon: BriefcaseBusiness, emoji: "✍️" },
+  { label: "My Servers", href: "/servers", icon: Server, emoji: "🕋" },
+  { label: "Wallet", href: "/wallet", icon: WalletCards, emoji: "🏛" },
   { label: "Deployments", href: "#", icon: Zap, soon: true },
   { label: "Analytics", href: "#", icon: BarChart3, soon: true },
   { label: "Settings", href: "#", icon: Settings, soon: true },
@@ -335,7 +335,7 @@ function Sidebar({ mobileOpen, closeMobile, collapsed, toggleCollapsed }: { mobi
         <nav className="space-y-1">
           {navItems.slice(0, 7).map((item) => {
             const active = location === item.href || (item.href === "/dashboard" && location === "/");
-            return <Link key={item.label} href={item.href} onClick={closeMobile} className={`nav-item ${active ? "nav-item-active" : ""}`}><item.icon size={17} strokeWidth={active ? 2.2 : 1.8} /><span className="sidebar-label">{item.label}</span>{active && <span className="nav-active-line" />}</Link>;
+            return <Link key={item.label} href={item.href} onClick={closeMobile} className={`nav-item ${active ? "nav-item-active" : ""}`}><span aria-hidden="true" className="text-[15px] leading-none">{item.emoji}</span><span className="sidebar-label">{item.label}</span>{active && <span className="nav-active-line" />}</Link>;
           })}
         </nav>
         <div className="sidebar-section mb-3 mt-9 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Manage</div>
