@@ -447,6 +447,23 @@ function ChannelsPage() {
     { id: "7k", label: "7k followers ⛵", price: "2200" },
   ];
   const [showPay, setShowPay] = useState<(typeof plans)[number] | null>(null);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [activatedId, setActivatedId] = useState<string | null>(null);
+
+  function markPaid(plan: (typeof plans)[number]) {
+    if (processingId || activatedId === plan.id) return;
+    setProcessingId(plan.id);
+    window.setTimeout(() => {
+      const result = activatePlan({ name: plan.label, price: plan.price, ram: "—", type: "Channel" });
+      setProcessingId(null);
+      if (result.success) {
+        setActivatedId(plan.id);
+        toast.success(`${plan.label} activated`, { description: "The channel plan was added to My Servers." });
+      } else {
+        toast.error("Insufficient wallet balance", { description: `Add funds before activating the ${plan.label} plan.` });
+      }
+    }, 700);
+  }
 
   function pay() {
     if (!showPay) return;
@@ -463,7 +480,7 @@ function ChannelsPage() {
     <div className="mx-auto max-w-[1000px]">
       <div className="mb-6"><p className="eyebrow"><span className="eyebrow-dot" /> Audience growth</p><h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-white">Channel plans</h2><p className="mt-2 text-sm text-[#877a9f]">Choose a follower package and activate it from your wallet balance.</p></div>
       <div className="grid gap-5 md:grid-cols-3">
-        {plans.map((plan) => <div key={plan.id} className="plan-card group text-center"><div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#24133f] text-2xl transition-transform duration-200 group-hover:-translate-y-1">{plan.label.split(" ").at(-1)}</div><h3 className="text-base font-bold text-white">{plan.label.slice(0, -2)}</h3><p className="mt-3 font-display text-3xl font-semibold text-white"><span className="mr-1 text-xs font-medium text-[#8a7ca1]">KES</span>{plan.price}</p><button onClick={() => setShowPay(plan)} className="primary-button mt-6 w-full">Buy now <ArrowRight size={15} /></button></div>)}
+        {plans.map((plan) => <div key={plan.id} className="plan-card group text-center"><div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#24133f] text-2xl transition-transform duration-200 group-hover:-translate-y-1">{plan.label.split(" ").at(-1)}</div><h3 className="text-base font-bold text-white">{plan.label.slice(0, -2)}</h3><p className="mt-3 font-display text-3xl font-semibold text-white"><span className="mr-1 text-xs font-medium text-[#8a7ca1]">KES</span>{plan.price}</p><div className="mt-6 grid gap-2"><button onClick={() => setShowPay(plan)} className="primary-button w-full">Buy now <ArrowRight size={15} /></button><button onClick={() => markPaid(plan)} disabled={processingId !== null || activatedId === plan.id} className="paid-button w-full">{processingId === plan.id ? "Processing..." : activatedId === plan.id ? "Activated" : "I have paid"}{activatedId === plan.id ? <Check size={14} /> : null}</button></div></div>)}
       </div>
     </div>
     {showPay && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close channel payment modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowPay(null)} /><div className="relative w-full max-w-[360px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowPay(null)} className="icon-button absolute right-4 top-4" aria-label="Close channel payment modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">📺</div><h3 className="text-base font-bold text-white">{showPay.label}</h3><p className="mt-1 text-sm text-[#a99abb]">KES {showPay.price}</p></div><div className="flex gap-3"><button onClick={() => setShowPay(null)} className="secondary-button flex-1">Cancel</button><button onClick={pay} className="primary-button flex-1">Pay KES {showPay.price}</button></div></div></div>}
@@ -480,6 +497,23 @@ function ForeignNumbersPage() {
     { id: "australia", country: "Australia", flag: "🇦🇺", price: "750", code: "+61" },
   ];
   const [showPay, setShowPay] = useState<(typeof numbers)[number] | null>(null);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [activatedId, setActivatedId] = useState<string | null>(null);
+
+  function markPaid(number: (typeof numbers)[number]) {
+    if (processingId || activatedId === number.id) return;
+    setProcessingId(number.id);
+    window.setTimeout(() => {
+      const result = activatePlan({ name: `${number.country} number ${number.code}`, price: number.price, ram: "—", type: "Foreign Number" });
+      setProcessingId(null);
+      if (result.success) {
+        setActivatedId(number.id);
+        toast.success(`${number.country} number activated`, { description: "The foreign number was added to My Servers." });
+      } else {
+        toast.error("Insufficient wallet balance", { description: `Add funds before activating the ${number.country} number.` });
+      }
+    }, 700);
+  }
 
   function pay() {
     if (!showPay) return;
@@ -496,7 +530,7 @@ function ForeignNumbersPage() {
     <div className="mx-auto max-w-[1100px]">
       <div className="mb-6"><p className="eyebrow"><span className="eyebrow-dot" /> Global reach</p><h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-white">International numbers</h2><p className="mt-2 text-sm text-[#877a9f]">Pick a country and activate a virtual number using your wallet balance.</p></div>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-        {numbers.map((number) => <div key={number.id} className="plan-card group text-center"><div className="mb-2 text-[36px] transition-transform duration-200 group-hover:-translate-y-1">{number.flag}</div><h3 className="text-sm font-bold text-white">{number.country} {number.code}</h3><p className="my-3 font-display text-2xl font-semibold text-white"><span className="mr-1 text-xs font-medium text-[#8a7ca1]">KES</span>{number.price}</p><button onClick={() => setShowPay(number)} className="primary-button w-full">Buy now <ArrowRight size={15} /></button></div>)}
+        {numbers.map((number) => <div key={number.id} className="plan-card group text-center"><div className="mb-2 text-[36px] transition-transform duration-200 group-hover:-translate-y-1">{number.flag}</div><h3 className="text-sm font-bold text-white">{number.country} {number.code}</h3><p className="my-3 font-display text-2xl font-semibold text-white"><span className="mr-1 text-xs font-medium text-[#8a7ca1]">KES</span>{number.price}</p><div className="grid gap-2"><button onClick={() => setShowPay(number)} className="primary-button w-full">Buy now <ArrowRight size={15} /></button><button onClick={() => markPaid(number)} disabled={processingId !== null || activatedId === number.id} className="paid-button w-full">{processingId === number.id ? "Processing..." : activatedId === number.id ? "Activated" : "I have paid"}{activatedId === number.id ? <Check size={14} /> : null}</button></div></div>)}
       </div>
     </div>
     {showPay && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close foreign number payment modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowPay(null)} /><div className="relative w-full max-w-[360px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowPay(null)} className="icon-button absolute right-4 top-4" aria-label="Close foreign number payment modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">{showPay.flag}</div><h3 className="text-base font-bold text-white">{showPay.country} {showPay.code}</h3><p className="mt-1 text-sm text-[#a99abb]">KES {showPay.price}</p></div><div className="flex gap-3"><button onClick={() => setShowPay(null)} className="secondary-button flex-1">Cancel</button><button onClick={pay} className="primary-button flex-1">Pay KES {showPay.price}</button></div></div></div>}
@@ -513,7 +547,24 @@ function OnlineJobsPage() {
     { id: "ai-chat", title: "AI Chat Trainer", emoji: "🤖", pay: "$10 - $25 / hour", fee: "650", desc: "Chat with AI and rate its answers. Help make AI smarter. Easy English writing job.", tasks: ["Chat with AI", "Rate responses", "Write examples"], time: "2-4 Hours Daily" },
   ];
   const [showApply, setShowApply] = useState<(typeof jobs)[number] | null>(null);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [activatedId, setActivatedId] = useState<string | null>(null);
   const usdRate = 130;
+
+  function markPaid(job: (typeof jobs)[number]) {
+    if (processingId || activatedId === job.id) return;
+    setProcessingId(job.id);
+    window.setTimeout(() => {
+      const result = activatePlan({ name: job.title, price: job.fee, ram: "—", type: "Online Job" });
+      setProcessingId(null);
+      if (result.success) {
+        setActivatedId(job.id);
+        toast.success(`${job.title} activated`, { description: "The job application was added to My Servers." });
+      } else {
+        toast.error("Insufficient wallet balance", { description: `Add funds before applying for ${job.title}.` });
+      }
+    }, 700);
+  }
 
   function apply() {
     if (!showApply) return;
@@ -530,7 +581,7 @@ function OnlineJobsPage() {
     <div className="mx-auto max-w-[1200px]">
       <div className="mb-6"><p className="eyebrow"><span className="eyebrow-dot" /> Work from home</p><h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-white">Online jobs</h2><p className="mt-2 text-sm text-[#877a9f]">Remote tasks with daily payouts and training included.</p></div>
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {jobs.map((job) => <div key={job.id} className={`plan-card flex flex-col ${job.popular ? "border-[#7c3aed] shadow-[0_0_20px_rgba(124,58,237,0.2)]" : ""}`}>{job.popular && <span className="mb-3 w-fit rounded-full bg-[#7c3aed] px-3 py-1 text-[10px] font-bold text-white">MOST DEMANDED 🔥</span>}<div className="mb-3 flex items-center gap-3"><div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#2d1f4e] bg-[#0f0a1a] text-[22px]">{job.emoji}</div><div><h3 className="text-[15px] font-bold leading-tight text-white">{job.title}</h3><p className="text-xs font-semibold text-[#a855f7]">{job.pay}</p></div></div><p className="mb-4 text-[13px] leading-[1.5] text-[#b8a9d9]">{job.desc}</p><div className="mb-4 space-y-1.5 rounded-xl bg-[#0f0a1a] p-3">{job.tasks.map((task) => <div key={task} className="flex gap-2 text-xs text-[#8b7aaa]"><span className="text-[#a855f7]">•</span>{task}</div>)}<div className="pt-1 text-[11px] text-[#6b5a8a]">⏰ {job.time}</div></div><div className="mt-auto flex items-center justify-between border-t border-white/[0.07] pt-4"><div><p className="text-[11px] text-[#6b5a8a]">Application fee</p><p className="text-lg font-extrabold text-white">KES {job.fee}</p><p className="text-[10px] text-[#7f7195]">≈ ${(Number(job.fee) / usdRate).toFixed(2)} USD</p></div><button onClick={() => setShowApply(job)} className="primary-button px-5">Apply now</button></div></div>)}
+        {jobs.map((job) => <div key={job.id} className={`plan-card flex flex-col ${job.popular ? "border-[#7c3aed] shadow-[0_0_20px_rgba(124,58,237,0.2)]" : ""}`}>{job.popular && <span className="mb-3 w-fit rounded-full bg-[#7c3aed] px-3 py-1 text-[10px] font-bold text-white">MOST DEMANDED 🔥</span>}<div className="mb-3 flex items-center gap-3"><div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#2d1f4e] bg-[#0f0a1a] text-[22px]">{job.emoji}</div><div><h3 className="text-[15px] font-bold leading-tight text-white">{job.title}</h3><p className="text-xs font-semibold text-[#a855f7]">{job.pay}</p></div></div><p className="mb-4 text-[13px] leading-[1.5] text-[#b8a9d9]">{job.desc}</p><div className="mb-4 space-y-1.5 rounded-xl bg-[#0f0a1a] p-3">{job.tasks.map((task) => <div key={task} className="flex gap-2 text-xs text-[#8b7aaa]"><span className="text-[#a855f7]">•</span>{task}</div>)}<div className="pt-1 text-[11px] text-[#6b5a8a]">⏰ {job.time}</div></div><div className="mt-auto flex items-center justify-between border-t border-white/[0.07] pt-4"><div><p className="text-[11px] text-[#6b5a8a]">Application fee</p><p className="text-lg font-extrabold text-white">KES {job.fee}</p><p className="text-[10px] text-[#7f7195]">≈ ${(Number(job.fee) / usdRate).toFixed(2)} USD</p></div><div className="grid gap-2"><button onClick={() => setShowApply(job)} className="primary-button px-5">Apply now</button><button onClick={() => markPaid(job)} disabled={processingId !== null || activatedId === job.id} className="paid-button w-full">{processingId === job.id ? "Processing..." : activatedId === job.id ? "Activated" : "I have paid"}{activatedId === job.id ? <Check size={14} /> : null}</button></div></div></div>)}
       </div>
     </div>
     {showApply && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close job application modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowApply(null)} /><div className="relative w-full max-w-[390px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowApply(null)} className="icon-button absolute right-4 top-4" aria-label="Close job application modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">{showApply.emoji}</div><h3 className="text-base font-bold text-white">{showApply.title}</h3><p className="mt-1 text-sm text-[#a99abb]">Application fee: KES {showApply.fee}</p><p className="mt-1 text-[11px] text-[#7f7195]">≈ ${(Number(showApply.fee) / usdRate).toFixed(2)} USD</p></div><div className="flex gap-3"><button onClick={() => setShowApply(null)} className="secondary-button flex-1">Cancel</button><button onClick={apply} className="primary-button flex-1">Pay KES {showApply.fee}</button></div></div></div>}
