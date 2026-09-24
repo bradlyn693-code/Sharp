@@ -7,6 +7,7 @@ import {
   ArrowRight,
   BarChart3,
   Bell,
+  BriefcaseBusiness,
   Check,
   ChevronDown,
   ChevronRight,
@@ -80,6 +81,7 @@ const navItems: { label: string; href: string; icon: LucideIcon; soon?: boolean 
   { label: "VPS", href: "/vps", icon: Cloud },
   { label: "Channels", href: "/channels", icon: Tv },
   { label: "Foreign Numbers", href: "/foreign-numbers", icon: Globe2 },
+  { label: "Online Jobs", href: "/online-jobs", icon: BriefcaseBusiness },
   { label: "My Servers", href: "/servers", icon: Server },
   { label: "Wallet", href: "/wallet", icon: WalletCards },
   { label: "Deployments", href: "#", icon: Zap, soon: true },
@@ -331,14 +333,14 @@ function Sidebar({ mobileOpen, closeMobile, collapsed, toggleCollapsed }: { mobi
         <div className={`mb-8 flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-3"}`}><Brand compact={collapsed} /><button onClick={() => { if (window.matchMedia("(min-width: 1024px)").matches) toggleCollapsed(); else closeMobile(); }} className="icon-button" aria-label={mobileOpen ? "Close sidebar" : collapsed ? "Expand sidebar" : "Collapse sidebar"} title={mobileOpen ? "Close sidebar" : collapsed ? "Expand sidebar" : "Collapse sidebar"}>{mobileOpen ? <X size={17} /> : collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}</button></div>
         <div className="sidebar-section mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Workspace</div>
         <nav className="space-y-1">
-          {navItems.slice(0, 6).map((item) => {
+          {navItems.slice(0, 7).map((item) => {
             const active = location === item.href || (item.href === "/dashboard" && location === "/");
             return <Link key={item.label} href={item.href} onClick={closeMobile} className={`nav-item ${active ? "nav-item-active" : ""}`}><item.icon size={17} strokeWidth={active ? 2.2 : 1.8} /><span className="sidebar-label">{item.label}</span>{active && <span className="nav-active-line" />}</Link>;
           })}
         </nav>
         <div className="sidebar-section mb-3 mt-9 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Manage</div>
         <nav className="space-y-1">
-          {navItems.slice(6).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span className="sidebar-label">{item.label}</span><span className="sidebar-label ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
+          {navItems.slice(7).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span className="sidebar-label">{item.label}</span><span className="sidebar-label ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
         </nav>
         <div className="mt-auto sidebar-user-area">
           <button onClick={signOut} className="flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold text-[#b17183] transition-colors hover:bg-[#2a101d] hover:text-[#ef92a6]"><LogOut size={15} /><span className="sidebar-label">Sign out</span></button>
@@ -501,6 +503,39 @@ function ForeignNumbersPage() {
   </DashboardLayout>;
 }
 
+function OnlineJobsPage() {
+  const jobs = [
+    { id: "data-entry", title: "Data Entry & Typing", emoji: "⌨️", pay: "$5 - $15 / hour", fee: "350", desc: "Simple typing jobs. Copy data from images/PDFs to system. No experience needed, just fast typing.", tasks: ["Typing 30WPM+", "Copy paste", "2-3 hrs daily"], time: "2-4 Hours Daily" },
+    { id: "image-annotation", title: "Image Annotation", emoji: "🖼️", pay: "$8 - $20 / hour", fee: "500", popular: true, desc: "Draw boxes around cars, people, objects in images to train AI self-driving cars. Highest paying.", tasks: ["Draw boxes on images", "Label objects", "Train AI models"], time: "3-5 Hours Daily" },
+    { id: "audio-transcription", title: "Audio Transcription", emoji: "🎧", pay: "$6 - $18 / hour", fee: "400", desc: "Listen to short audio clips (5-10 sec) and type what you hear. Good for good listeners.", tasks: ["Listen & type", "English audio", "Short clips"], time: "2-3 Hours Daily" },
+    { id: "content-moderation", title: "Content Moderation", emoji: "🛡️", pay: "$7 - $16 / hour", fee: "450", desc: "Review posts, images, videos and decide if they follow rules. Work for big social apps.", tasks: ["Review posts", "Flag bad content", "Follow guidelines"], time: "Flexible Hours" },
+    { id: "lidar", title: "3D LiDAR Annotation", emoji: "🚗", pay: "$12 - $30 / hour", fee: "850", desc: "Premium job. Annotate 3D point cloud data for self-driving AI. Training provided, high pay.", tasks: ["3D box annotation", "Advanced level", "Training included"], time: "4-6 Hours Daily" },
+    { id: "ai-chat", title: "AI Chat Trainer", emoji: "🤖", pay: "$10 - $25 / hour", fee: "650", desc: "Chat with AI and rate its answers. Help make AI smarter. Easy English writing job.", tasks: ["Chat with AI", "Rate responses", "Write examples"], time: "2-4 Hours Daily" },
+  ];
+  const [showApply, setShowApply] = useState<(typeof jobs)[number] | null>(null);
+
+  function apply() {
+    if (!showApply) return;
+    const result = activatePlan({ name: showApply.title, price: showApply.fee, ram: "—", type: "Online Job" });
+    if (!result.success) {
+      toast.error("Insufficient wallet balance", { description: `Add KES ${(Number(showApply.fee) - result.balance).toFixed(2)} to pay this application fee.` });
+      return;
+    }
+    setShowApply(null);
+    toast.success("Application submitted", { description: `${showApply.title} has been added to My Servers.` });
+  }
+
+  return <DashboardLayout><AppHeader title="Online Jobs" subtitle="Work from home with flexible tasks and daily earning opportunities." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />
+    <div className="mx-auto max-w-[1200px]">
+      <div className="mb-6"><p className="eyebrow"><span className="eyebrow-dot" /> Work from home</p><h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-white">Online jobs</h2><p className="mt-2 text-sm text-[#877a9f]">Remote tasks with daily payouts and training included.</p></div>
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {jobs.map((job) => <div key={job.id} className={`plan-card flex flex-col ${job.popular ? "border-[#7c3aed] shadow-[0_0_20px_rgba(124,58,237,0.2)]" : ""}`}>{job.popular && <span className="mb-3 w-fit rounded-full bg-[#7c3aed] px-3 py-1 text-[10px] font-bold text-white">MOST DEMANDED 🔥</span>}<div className="mb-3 flex items-center gap-3"><div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#2d1f4e] bg-[#0f0a1a] text-[22px]">{job.emoji}</div><div><h3 className="text-[15px] font-bold leading-tight text-white">{job.title}</h3><p className="text-xs font-semibold text-[#a855f7]">{job.pay}</p></div></div><p className="mb-4 text-[13px] leading-[1.5] text-[#b8a9d9]">{job.desc}</p><div className="mb-4 space-y-1.5 rounded-xl bg-[#0f0a1a] p-3">{job.tasks.map((task) => <div key={task} className="flex gap-2 text-xs text-[#8b7aaa]"><span className="text-[#a855f7]">•</span>{task}</div>)}<div className="pt-1 text-[11px] text-[#6b5a8a]">⏰ {job.time}</div></div><div className="mt-auto flex items-center justify-between border-t border-white/[0.07] pt-4"><div><p className="text-[11px] text-[#6b5a8a]">Application fee</p><p className="text-lg font-extrabold text-white">KES {job.fee}</p></div><button onClick={() => setShowApply(job)} className="primary-button px-5">Apply now</button></div></div>)}
+      </div>
+    </div>
+    {showApply && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close job application modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowApply(null)} /><div className="relative w-full max-w-[390px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowApply(null)} className="icon-button absolute right-4 top-4" aria-label="Close job application modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">{showApply.emoji}</div><h3 className="text-base font-bold text-white">{showApply.title}</h3><p className="mt-1 text-sm text-[#a99abb]">Application fee: KES {showApply.fee}</p></div><div className="flex gap-3"><button onClick={() => setShowApply(null)} className="secondary-button flex-1">Cancel</button><button onClick={apply} className="primary-button flex-1">Pay KES {showApply.fee}</button></div></div></div>}
+  </DashboardLayout>;
+}
+
 function WalletPage() {
   const paystackUrl = "https://paystack.shop/pay/o2dkau16m7";
   const [showPay, setShowPay] = useState(false);
@@ -523,7 +558,7 @@ function WalletPage() {
 }
 
 function App() {
-  return <><Switch><Route path="/" component={() => <RedirectTo href={isLoggedIn() ? "/dashboard" : "/login"} />} /><Route path="/login" component={LoginPage} /><Route path="/signup" component={SignupPage} /><Route path="/reset-password" component={ResetPasswordPage} /><Route path="/dashboard"><RequireAuth><DashboardPage /></RequireAuth></Route><Route path="/vps"><RequireAuth><VpsPage /></RequireAuth></Route><Route path="/channels"><RequireAuth><ChannelsPage /></RequireAuth></Route><Route path="/foreign-numbers"><RequireAuth><ForeignNumbersPage /></RequireAuth></Route><Route path="/servers"><RequireAuth><ServersPage /></RequireAuth></Route><Route path="/wallet"><RequireAuth><WalletPage /></RequireAuth></Route><Route><RedirectTo href="/login" /></Route></Switch><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></>;
+  return <><Switch><Route path="/" component={() => <RedirectTo href={isLoggedIn() ? "/dashboard" : "/login"} />} /><Route path="/login" component={LoginPage} /><Route path="/signup" component={SignupPage} /><Route path="/reset-password" component={ResetPasswordPage} /><Route path="/dashboard"><RequireAuth><DashboardPage /></RequireAuth></Route><Route path="/vps"><RequireAuth><VpsPage /></RequireAuth></Route><Route path="/channels"><RequireAuth><ChannelsPage /></RequireAuth></Route><Route path="/foreign-numbers"><RequireAuth><ForeignNumbersPage /></RequireAuth></Route><Route path="/online-jobs"><RequireAuth><OnlineJobsPage /></RequireAuth></Route><Route path="/servers"><RequireAuth><ServersPage /></RequireAuth></Route><Route path="/wallet"><RequireAuth><WalletPage /></RequireAuth></Route><Route><RedirectTo href="/login" /></Route></Switch><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></>;
 }
 
 function RedirectTo({ href }: { href: string }) {
