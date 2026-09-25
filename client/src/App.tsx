@@ -82,6 +82,7 @@ const navItems: { label: string; href: string; icon: LucideIcon; emoji?: string;
   { label: "Channels", href: "/channels", icon: Tv, emoji: "📺" },
   { label: "Foreign Numbers", href: "/foreign-numbers", icon: Globe2, emoji: "🌍" },
   { label: "Online Jobs", href: "/online-jobs", icon: BriefcaseBusiness, emoji: "✍️" },
+  { label: "WhatsApp Unban", href: "/whatsapp-unban", icon: ShieldCheck, emoji: "📱" },
   { label: "My Servers", href: "/servers", icon: Server, emoji: "🕋" },
   { label: "Wallet", href: "/wallet", icon: WalletCards, emoji: "🏛" },
   { label: "Deployments", href: "#", icon: Zap, soon: true },
@@ -333,14 +334,14 @@ function Sidebar({ mobileOpen, closeMobile, collapsed, toggleCollapsed }: { mobi
         <div className={`mb-8 flex items-center ${collapsed ? "justify-center px-0" : "justify-between px-3"}`}><Brand compact={collapsed} /><button onClick={() => { if (window.matchMedia("(min-width: 1024px)").matches) toggleCollapsed(); else closeMobile(); }} className="icon-button" aria-label={mobileOpen ? "Close sidebar" : collapsed ? "Expand sidebar" : "Collapse sidebar"} title={mobileOpen ? "Close sidebar" : collapsed ? "Expand sidebar" : "Collapse sidebar"}>{mobileOpen ? <X size={17} /> : collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}</button></div>
         <div className="sidebar-section mb-3 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Workspace</div>
         <nav className="space-y-1">
-          {navItems.slice(0, 7).map((item) => {
+          {navItems.slice(0, 8).map((item) => {
             const active = location === item.href || (item.href === "/dashboard" && location === "/");
             return <Link key={item.label} href={item.href} onClick={closeMobile} className={`nav-item ${active ? "nav-item-active" : ""}`}><span aria-hidden="true" className="text-[15px] leading-none">{item.emoji}</span><span className="sidebar-label">{item.label}</span>{active && <span className="nav-active-line" />}</Link>;
           })}
         </nav>
         <div className="sidebar-section mb-3 mt-9 px-3 text-[10px] font-bold uppercase tracking-[0.18em] text-[#5e5273]">Manage</div>
         <nav className="space-y-1">
-          {navItems.slice(7).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span className="sidebar-label">{item.label}</span><span className="sidebar-label ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
+          {navItems.slice(8).map((item) => <button key={item.label} onClick={() => toast.info(`${item.label} is coming soon`, { description: "We’re polishing this part of your workspace." })} className="nav-item w-full text-left"><item.icon size={17} strokeWidth={1.8} /><span className="sidebar-label">{item.label}</span><span className="sidebar-label ml-auto text-[9px] font-semibold uppercase tracking-wider text-[#5d5174]">Soon</span></button>)}
         </nav>
         <div className="mt-auto sidebar-user-area">
           <button onClick={signOut} className="flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-xs font-semibold text-[#b17183] transition-colors hover:bg-[#2a101d] hover:text-[#ef92a6]"><LogOut size={15} /><span className="sidebar-label">Sign out</span></button>
@@ -438,6 +439,51 @@ function VpsPage() {
 function ServersPage() {
   const servers = JSON.parse(localStorage.getItem("fluxy_servers") || "[]") as { id: number; plan: string; ram: string; price: string; date: string; type: string }[];
   return <DashboardLayout><AppHeader title="My Servers" subtitle="Keep an eye on every environment from one calm workspace." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />{servers.length === 0 ? <div className="empty-panel"><div className="server-illustration"><div className="server-rack"><span /><span /><span /></div><div className="server-pulse" /></div><h2 className="mt-7 font-display text-2xl font-semibold tracking-[-0.035em] text-white">No servers yet</h2><p className="mt-2 max-w-sm text-sm leading-6 text-[#877a9f]">Your infrastructure will show up here once you activate your first plan. Ready when you are.</p><Link href="/vps" className="primary-button mt-7">Explore plans <ArrowRight size={15} /></Link></div> : <div><div className="mb-5 flex items-end justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Provisioned infrastructure</p><h2 className="mt-2 font-display text-xl font-semibold text-white">Your active servers</h2></div><Link href="/vps" className="primary-button">Add server <Plus size={15} /></Link></div><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{servers.map((server) => <div key={server.id} className="server-card"><div className="flex items-center justify-between"><div className="flex items-center gap-3"><div className="server-status-icon"><Server size={17} /></div><div><h3 className="text-sm font-semibold text-white">{server.plan}</h3><p className="mt-1 text-[11px] text-[#807294]">{server.type} · {server.date}</p></div></div><span className="status-pill">Active</span></div><div className="mt-5 grid grid-cols-2 gap-3 border-t border-white/[0.07] pt-4"><div><p className="text-[10px] uppercase tracking-wider text-[#766a8c]">Memory</p><p className="mt-1 text-sm font-semibold text-white">{server.ram} DDR4</p></div><div><p className="text-[10px] uppercase tracking-wider text-[#766a8c]">Monthly</p><p className="mt-1 text-sm font-semibold text-white">KSH {server.price}</p></div></div></div>)}</div></div>}</DashboardLayout>;
+}
+
+
+function WhatsappUnbanPage() {
+  const service = {
+    id: "whatsapp-unban",
+    title: "FLUXY TECH WHATSAPP UNBAN SERVICE",
+    price: "600",
+  };
+  const [processing, setProcessing] = useState(false);
+  const [activated, setActivated] = useState(false);
+
+  function markPaid() {
+    if (processing || activated) return;
+    setProcessing(true);
+    window.setTimeout(() => {
+      const result = activatePlan({ name: service.title, price: service.price, ram: "—", type: "WhatsApp Service" });
+      setProcessing(false);
+      if (result.success) {
+        setActivated(true);
+        toast.success("WhatsApp Unban Service activated", { description: "Your service request was added to My Servers." });
+      } else {
+        toast.error("Insufficient wallet balance", { description: "Add KES 600 to your wallet before activating this service." });
+      }
+    }, 700);
+  }
+
+  return <DashboardLayout><AppHeader title="WhatsApp Unban Service" subtitle="Professional appeal support for banned WhatsApp accounts." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />
+    <div className="mx-auto max-w-[980px]">
+      <section className="relative overflow-hidden rounded-[24px] border border-[#3d2468] bg-[radial-gradient(circle_at_top_right,rgba(124,58,237,0.24),transparent_42%),#180d2a] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:p-9">
+        <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#7c3aed]/15 blur-3xl" />
+        <div className="relative">
+          <div className="mb-5 flex flex-wrap items-center gap-3"><span className="rounded-full border border-[#7441c0]/60 bg-[#7c3aed]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#d8b4fe]">WhatsApp Support</span><span className="status-pill">KES 600</span></div>
+          <h2 className="max-w-2xl font-display text-2xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">✅ {service.title} - KES 600</h2>
+          <p className="mt-4 max-w-2xl text-base leading-7 text-[#c0b2d5]">Has your WhatsApp been banned? We will unban it in 2-24 hours.</p>
+          <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+            <div><p className="eyebrow"><span className="eyebrow-dot" /> What we fix</p><ul className="mt-4 space-y-3 text-sm leading-6 text-[#d9d0e7]"><li>• Banned: “Your number is banned from using WhatsApp”</li><li>• Banned: “You need official WhatsApp”</li><li>• Spam ban / Business ban / GB WhatsApp ban</li></ul></div>
+            <div><p className="eyebrow"><span className="eyebrow-dot" /> What you get for 600 KSH</p><ol className="mt-4 space-y-3 text-sm leading-6 text-[#d9d0e7]"><li><span className="mr-2 text-[#c084fc]">1.</span>Professional unban appeal method (official)</li><li><span className="mr-2 text-[#c084fc]">2.</span>3 custom appeal emails/templates that work</li><li><span className="mr-2 text-[#c084fc]">3.</span>We submit for you if you want</li><li><span className="mr-2 text-[#c084fc]">4.</span>Guide to avoid future bans</li><li><span className="mr-2 text-[#c084fc]">5.</span>24hr support on WhatsApp</li></ol></div>
+          </div>
+          <div className="mt-8 rounded-2xl border border-white/[0.08] bg-black/15 p-5"><p className="eyebrow"><span className="eyebrow-dot" /> Requirements</p><p className="mt-3 text-sm leading-6 text-[#b9abcd]">Your banned WhatsApp number, the exact ban message or a screenshot, and any relevant account details needed to prepare the appeal.</p></div>
+          <div className="mt-8 flex flex-col gap-3 border-t border-white/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs uppercase tracking-[0.16em] text-[#817294]">Service fee</p><p className="mt-1 font-display text-3xl font-semibold text-white">KES 600</p></div><button onClick={markPaid} disabled={processing || activated} className="paid-button min-w-[220px] justify-center">{processing ? "Processing..." : activated ? "Activated" : "I have paid"}{activated ? <Check size={14} /> : null}</button></div>
+        </div>
+      </section>
+    </div>
+  </DashboardLayout>;
 }
 
 function ChannelsPage() {
@@ -610,7 +656,7 @@ function WalletPage() {
 }
 
 function App() {
-  return <><Switch><Route path="/" component={() => <RedirectTo href={isLoggedIn() ? "/dashboard" : "/login"} />} /><Route path="/login" component={LoginPage} /><Route path="/signup" component={SignupPage} /><Route path="/reset-password" component={ResetPasswordPage} /><Route path="/dashboard"><RequireAuth><DashboardPage /></RequireAuth></Route><Route path="/vps"><RequireAuth><VpsPage /></RequireAuth></Route><Route path="/channels"><RequireAuth><ChannelsPage /></RequireAuth></Route><Route path="/foreign-numbers"><RequireAuth><ForeignNumbersPage /></RequireAuth></Route><Route path="/online-jobs"><RequireAuth><OnlineJobsPage /></RequireAuth></Route><Route path="/servers"><RequireAuth><ServersPage /></RequireAuth></Route><Route path="/wallet"><RequireAuth><WalletPage /></RequireAuth></Route><Route><RedirectTo href="/login" /></Route></Switch><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></>;
+  return <><Switch><Route path="/" component={() => <RedirectTo href={isLoggedIn() ? "/dashboard" : "/login"} />} /><Route path="/login" component={LoginPage} /><Route path="/signup" component={SignupPage} /><Route path="/reset-password" component={ResetPasswordPage} /><Route path="/dashboard"><RequireAuth><DashboardPage /></RequireAuth></Route><Route path="/vps"><RequireAuth><VpsPage /></RequireAuth></Route><Route path="/channels"><RequireAuth><ChannelsPage /></RequireAuth></Route><Route path="/foreign-numbers"><RequireAuth><ForeignNumbersPage /></RequireAuth></Route><Route path="/online-jobs"><RequireAuth><OnlineJobsPage /></RequireAuth></Route><Route path="/whatsapp-unban"><RequireAuth><WhatsappUnbanPage /></RequireAuth></Route><Route path="/servers"><RequireAuth><ServersPage /></RequireAuth></Route><Route path="/wallet"><RequireAuth><WalletPage /></RequireAuth></Route><Route><RedirectTo href="/login" /></Route></Switch><Toaster theme="dark" toastOptions={{ style: { background: "#1a102e", border: "1px solid #3a2863", color: "#fff" } }} /></>;
 }
 
 function RedirectTo({ href }: { href: string }) {
