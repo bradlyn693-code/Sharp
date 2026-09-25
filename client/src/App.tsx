@@ -446,7 +446,7 @@ function WhatsappUnbanPage() {
   const service = {
     id: "whatsapp-unban",
     title: "FLUXY TECH WHATSAPP UNBAN SERVICE",
-    price: "600",
+    price: "630",
   };
   const [processing, setProcessing] = useState(false);
   const [activated, setActivated] = useState(false);
@@ -461,7 +461,7 @@ function WhatsappUnbanPage() {
         setActivated(true);
         toast.success("WhatsApp Unban Service activated", { description: "Your service request was added to My Servers." });
       } else {
-        toast.error("Insufficient wallet balance", { description: "Add KES 600 to your wallet before activating this service." });
+        toast.error("Insufficient wallet balance", { description: "Add KES 630 to your wallet before activating this service." });
       }
     }, 700);
   }
@@ -471,15 +471,15 @@ function WhatsappUnbanPage() {
       <section className="relative overflow-hidden rounded-[24px] border border-[#3d2468] bg-[radial-gradient(circle_at_top_right,rgba(124,58,237,0.24),transparent_42%),#180d2a] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:p-9">
         <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#7c3aed]/15 blur-3xl" />
         <div className="relative">
-          <div className="mb-5 flex flex-wrap items-center gap-3"><span className="rounded-full border border-[#7441c0]/60 bg-[#7c3aed]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#d8b4fe]">WhatsApp Support</span><span className="status-pill">KES 600</span></div>
-          <h2 className="max-w-2xl font-display text-2xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">✅ {service.title} - KES 600</h2>
+          <div className="mb-5 flex flex-wrap items-center gap-3"><span className="rounded-full border border-[#7441c0]/60 bg-[#7c3aed]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#d8b4fe]">WhatsApp Support</span><span className="status-pill">KES 630 <span className="ml-1 text-[10px] font-medium opacity-75">≈ $4.85 USD</span></span></div>
+          <h2 className="max-w-2xl font-display text-2xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">✅ {service.title} - KES 630</h2>
           <p className="mt-4 max-w-2xl text-base leading-7 text-[#c0b2d5]">Has your WhatsApp been banned? We will unban it in 2-24 hours.</p>
           <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <div><p className="eyebrow"><span className="eyebrow-dot" /> What we fix</p><ul className="mt-4 space-y-3 text-sm leading-6 text-[#d9d0e7]"><li>• Banned: “Your number is banned from using WhatsApp”</li><li>• Banned: “You need official WhatsApp”</li><li>• Spam ban / Business ban / GB WhatsApp ban</li></ul></div>
-            <div><p className="eyebrow"><span className="eyebrow-dot" /> What you get for 600 KSH</p><ol className="mt-4 space-y-3 text-sm leading-6 text-[#d9d0e7]"><li><span className="mr-2 text-[#c084fc]">1.</span>Professional unban appeal method (official)</li><li><span className="mr-2 text-[#c084fc]">2.</span>3 custom appeal emails/templates that work</li><li><span className="mr-2 text-[#c084fc]">3.</span>We submit for you if you want</li><li><span className="mr-2 text-[#c084fc]">4.</span>Guide to avoid future bans</li><li><span className="mr-2 text-[#c084fc]">5.</span>24hr support on WhatsApp</li></ol></div>
+            <div><p className="eyebrow"><span className="eyebrow-dot" /> What you get for 630 KSH</p><ol className="mt-4 space-y-3 text-sm leading-6 text-[#d9d0e7]"><li><span className="mr-2 text-[#c084fc]">1.</span>Professional unban appeal method (official)</li><li><span className="mr-2 text-[#c084fc]">2.</span>3 custom appeal emails/templates that work</li><li><span className="mr-2 text-[#c084fc]">3.</span>We submit for you if you want</li><li><span className="mr-2 text-[#c084fc]">4.</span>Guide to avoid future bans</li><li><span className="mr-2 text-[#c084fc]">5.</span>24hr support on WhatsApp</li></ol></div>
           </div>
           <div className="mt-8 rounded-2xl border border-white/[0.08] bg-black/15 p-5"><p className="eyebrow"><span className="eyebrow-dot" /> Requirements</p><p className="mt-3 text-sm leading-6 text-[#b9abcd]">Your banned WhatsApp number, the exact ban message or a screenshot, and any relevant account details needed to prepare the appeal.</p></div>
-          <div className="mt-8 flex flex-col gap-3 border-t border-white/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs uppercase tracking-[0.16em] text-[#817294]">Service fee</p><p className="mt-1 font-display text-3xl font-semibold text-white">KES 600</p></div><button onClick={markPaid} disabled={processing || activated} className="paid-button min-w-[220px] justify-center">{processing ? "Processing..." : activated ? "Activated" : "I have paid"}{activated ? <Check size={14} /> : null}</button></div>
+          <div className="mt-8 flex flex-col gap-3 border-t border-white/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs uppercase tracking-[0.16em] text-[#817294]">Service fee</p><p className="mt-1 font-display text-3xl font-semibold text-white">KES 630</p><p className="mt-1 text-xs text-[#817294]">≈ $4.85 USD</p></div><button onClick={markPaid} disabled={processing || activated} className="paid-button min-w-[220px] justify-center">{processing ? "Processing..." : activated ? "Activated" : "I have paid"}{activated ? <Check size={14} /> : null}</button></div>
         </div>
       </section>
     </div>
