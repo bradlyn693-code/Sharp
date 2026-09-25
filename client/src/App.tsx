@@ -448,9 +448,20 @@ function WhatsappUnbanPage() {
     title: "FLUXY TECH WHATSAPP UNBAN SERVICE",
     price: "630",
   };
+  const [, navigate] = useLocation();
   const [processing, setProcessing] = useState(false);
   const [activated, setActivated] = useState(false);
 
+  function buyNow() {
+    const balance = Number(localStorage.getItem("fluxy_balance") || "0");
+    if (balance < Number(service.price)) {
+      localStorage.setItem("fluxy_pending_service", JSON.stringify({ name: service.title, price: service.price, type: "WhatsApp Service" }));
+      toast.info("Add funds to continue", { description: "Your WhatsApp Unban Service is ready in Wallet." });
+      navigate("/wallet");
+      return;
+    }
+    markPaid();
+  }
   function markPaid() {
     if (processing || activated) return;
     setProcessing(true);
@@ -479,7 +490,7 @@ function WhatsappUnbanPage() {
             <div><p className="eyebrow"><span className="eyebrow-dot" /> What you get for 630 KSH</p><ol className="mt-4 space-y-3 text-sm leading-6 text-[#d9d0e7]"><li><span className="mr-2 text-[#c084fc]">1.</span>Professional unban appeal method (official)</li><li><span className="mr-2 text-[#c084fc]">2.</span>3 custom appeal emails/templates that work</li><li><span className="mr-2 text-[#c084fc]">3.</span>We submit for you if you want</li><li><span className="mr-2 text-[#c084fc]">4.</span>Guide to avoid future bans</li><li><span className="mr-2 text-[#c084fc]">5.</span>24hr support on WhatsApp</li></ol></div>
           </div>
           <div className="mt-8 rounded-2xl border border-white/[0.08] bg-black/15 p-5"><p className="eyebrow"><span className="eyebrow-dot" /> Requirements</p><p className="mt-3 text-sm leading-6 text-[#b9abcd]">Your banned WhatsApp number, the exact ban message or a screenshot, and any relevant account details needed to prepare the appeal.</p></div>
-          <div className="mt-8 flex flex-col gap-3 border-t border-white/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs uppercase tracking-[0.16em] text-[#817294]">Service fee</p><p className="mt-1 font-display text-3xl font-semibold text-white">KES 630</p><p className="mt-1 text-xs text-[#817294]">≈ $4.85 USD</p></div><button onClick={markPaid} disabled={processing || activated} className="paid-button min-w-[220px] justify-center">{processing ? "Processing..." : activated ? "Activated" : "I have paid"}{activated ? <Check size={14} /> : null}</button></div>
+          <div className="mt-8 flex flex-col gap-4 border-t border-white/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs uppercase tracking-[0.16em] text-[#817294]">Service fee</p><p className="mt-1 font-display text-3xl font-semibold text-white">KES 630</p><p className="mt-1 text-xs text-[#817294]">≈ $4.85 USD</p></div><div className="grid w-full gap-2 sm:w-auto sm:min-w-[220px]"><button onClick={buyNow} disabled={processing || activated} className="primary-button justify-center">{activated ? "Activated" : "Buy now"}<ArrowRight size={15} /></button><button onClick={markPaid} disabled={processing || activated} className="paid-button justify-center">{processing ? "Processing..." : activated ? "Activated" : "I have paid"}{activated ? <Check size={14} /> : null}</button></div></div>
         </div>
       </section>
     </div>
