@@ -42,8 +42,8 @@ const PURPLE = "#7c3aed";
 const plans = [
   {
     name: "Unlimited",
-    price: "250.00",
-    currency: "KES",
+    price: "1.92",
+    currency: "USD",
     subtitle: "No caps on RAM, disk, or CPU.",
     specs: [
       ["Memory", "Unlimited"],
@@ -57,8 +57,8 @@ const plans = [
   },
   {
     name: "Admin Panel",
-    price: "550.00",
-    currency: "KSH",
+    price: "4.23",
+    currency: "USD",
     subtitle: "Full admin access + extra resources.",
     specs: [["Memory", "Unlimited"], ["Disk", "Unlimited"], ["CPU", "Unlimited"], ["Databases", "Unlimited"], ["Backups", "Unlimited"]],
     accent: "rose",
@@ -69,11 +69,11 @@ const plans = [
 ] as const;
 
 const vpsPlans = [
-  { id: "vps-8", emoji: "🎱", name: "VPS 8GB RAM", ram: "8GB", price: "980", vcpu: "2 vCPU", storage: "50GB NVMe SSD", bandwidth: "2TB Transfer", ip: "1 Dedicated IP", desc: "Perfect for small businesses, WordPress sites & starter game servers.", bestFor: "Best for: Blogs, Small E-commerce, Minecraft 20 players", features: ["2 vCPU Xeon", "50GB NVMe SSD", "2TB Bandwidth", "DDoS Protection", "Instant Deploy"], popular: false },
-  { id: "vps-12", emoji: "🏈", name: "VPS 12GB RAM", ram: "12GB", price: "1600", vcpu: "3 vCPU", storage: "80GB NVMe SSD", bandwidth: "3TB Transfer", ip: "1 Dedicated IP", desc: "Balanced power for growing communities and medium traffic apps.", bestFor: "Best for: GTA Roleplay, Medium Businesses, WooCommerce", features: ["3 vCPU Xeon", "80GB NVMe SSD", "3TB Bandwidth", "Daily Backups", "Root Access"], popular: false },
-  { id: "vps-24", emoji: "⚾", name: "VPS 24GB RAM", ram: "24GB", price: "3500", vcpu: "6 vCPU", storage: "150GB NVMe SSD", bandwidth: "5TB Transfer", ip: "1 Dedicated IP + IPv6", desc: "High-performance workhorse — our most popular VPS for serious workloads.", bestFor: "Best for: Large MC Networks, SaaS Apps, High-Traffic Sites", features: ["6 vCPU Xeon Gold", "150GB NVMe SSD", "5TB Bandwidth", "Priority Support", "Free cPanel"], popular: true },
-  { id: "vps-48", emoji: "🏓", name: "VPS 48GB RAM", ram: "48GB", price: "4900", vcpu: "8 vCPU", storage: "300GB NVMe SSD", bandwidth: "Unmetered", ip: "2 Dedicated IPs", desc: "Enterprise-grade power for resource-heavy applications & virtualization.", bestFor: "Best for: Dedicated Game Hosting, Enterprise Apps, Video Streaming", features: ["8 vCPU Xeon Gold", "300GB NVMe SSD", "Unmetered Bandwidth", "24/7 Phone Support", "Free Migration"], popular: false },
-  { id: "vps-64", emoji: "⛳", name: "VPS 64GB RAM", ram: "64GB", price: "6000", vcpu: "12 vCPU", storage: "500GB NVMe SSD", bandwidth: "Unmetered", ip: "3 Dedicated IPs", desc: "Ultimate performance — no limits. Bare-metal like power in a VPS.", bestFor: "Best for: Large Enterprises, Private Cloud, Heavy Virtualization", features: ["12 vCPU Xeon Platinum", "500GB NVMe SSD", "Unmetered + 10Gbps Port", "Dedicated Support Agent", "Custom ISO"], popular: false },
+  { id: "vps-8", emoji: "🎱", name: "VPS 8GB RAM", ram: "8GB", price: "7.54", vcpu: "2 vCPU", storage: "50GB NVMe SSD", bandwidth: "2TB Transfer", ip: "1 Dedicated IP", desc: "Perfect for small businesses, WordPress sites & starter game servers.", bestFor: "Best for: Blogs, Small E-commerce, Minecraft 20 players", features: ["2 vCPU Xeon", "50GB NVMe SSD", "2TB Bandwidth", "DDoS Protection", "Instant Deploy"], popular: false },
+  { id: "vps-12", emoji: "🏈", name: "VPS 12GB RAM", ram: "12GB", price: "12.31", vcpu: "3 vCPU", storage: "80GB NVMe SSD", bandwidth: "3TB Transfer", ip: "1 Dedicated IP", desc: "Balanced power for growing communities and medium traffic apps.", bestFor: "Best for: GTA Roleplay, Medium Businesses, WooCommerce", features: ["3 vCPU Xeon", "80GB NVMe SSD", "3TB Bandwidth", "Daily Backups", "Root Access"], popular: false },
+  { id: "vps-24", emoji: "⚾", name: "VPS 24GB RAM", ram: "24GB", price: "26.92", vcpu: "6 vCPU", storage: "150GB NVMe SSD", bandwidth: "5TB Transfer", ip: "1 Dedicated IP + IPv6", desc: "High-performance workhorse — our most popular VPS for serious workloads.", bestFor: "Best for: Large MC Networks, SaaS Apps, High-Traffic Sites", features: ["6 vCPU Xeon Gold", "150GB NVMe SSD", "5TB Bandwidth", "Priority Support", "Free cPanel"], popular: true },
+  { id: "vps-48", emoji: "🏓", name: "VPS 48GB RAM", ram: "48GB", price: "37.69", vcpu: "8 vCPU", storage: "300GB NVMe SSD", bandwidth: "Unmetered", ip: "2 Dedicated IPs", desc: "Enterprise-grade power for resource-heavy applications & virtualization.", bestFor: "Best for: Dedicated Game Hosting, Enterprise Apps, Video Streaming", features: ["8 vCPU Xeon Gold", "300GB NVMe SSD", "Unmetered Bandwidth", "24/7 Phone Support", "Free Migration"], popular: false },
+  { id: "vps-64", emoji: "⛳", name: "VPS 64GB RAM", ram: "64GB", price: "46.15", vcpu: "12 vCPU", storage: "500GB NVMe SSD", bandwidth: "Unmetered", ip: "3 Dedicated IPs", desc: "Ultimate performance — no limits. Bare-metal like power in a VPS.", bestFor: "Best for: Large Enterprises, Private Cloud, Heavy Virtualization", features: ["12 vCPU Xeon Platinum", "500GB NVMe SSD", "Unmetered + 10Gbps Port", "Dedicated Support Agent", "Custom ISO"], popular: false },
 ] as const;
 
 const navItems: { label: string; href: string; icon: LucideIcon; emoji?: string; soon?: boolean }[] = [
@@ -94,7 +94,15 @@ function isLoggedIn() {
   return typeof window !== "undefined" && (localStorage.getItem("fluxy_logged") === "true" || sessionStorage.getItem("fluxy_logged") === "true");
 }
 
+function ensureUsdWallet() {
+  if (typeof window !== "undefined" && localStorage.getItem("fluxy_currency") !== "USD") {
+    localStorage.setItem("fluxy_balance", "0");
+    localStorage.setItem("fluxy_currency", "USD");
+  }
+}
+
 function activatePlan({ name, price, ram, type }: { name: string; price: string; ram: string; type: string }) {
+  ensureUsdWallet();
   const balance = Number(localStorage.getItem("fluxy_balance") || "0");
   const amount = Number(price);
   if (balance < amount) return { success: false, balance };
@@ -401,7 +409,7 @@ function PlanCard({ plan }: { plan: (typeof plans)[number] }) {
 function DashboardPage() {
   const [query, setQuery] = useState("");
   const filteredPlans = useMemo(() => plans.filter((plan) => `${plan.name} ${plan.subtitle}`.toLowerCase().includes(query.toLowerCase())), [query]);
-  return <DashboardLayout><AppHeader title="Pricing & Plans" subtitle="Choose the perfect plan for your infrastructure · Upgrade anytime, cancel anytime" onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} /><div className="mb-7 grid gap-4 md:grid-cols-2"><StatCard icon={Server} label="Active servers" value="0 / 20" meta="No active servers" /><StatCard icon={WalletCards} label="Wallet balance" value="KES 0.00" meta="Available for renewals" /></div><section><div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Pick your capacity</p><h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.03em] text-white">Plans that scale with you</h2></div><label className="dashboard-filter"><Search size={14} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter plans" /></label></div><div className="plan-grid">{filteredPlans.map((plan) => <PlanCard key={plan.name} plan={plan} />)}</div>{filteredPlans.length === 0 && <div className="empty-search"><Search size={22} /><p>No plans match “{query}”.</p></div>}</section></DashboardLayout>;
+  return <DashboardLayout><AppHeader title="Pricing & Plans" subtitle="Choose the perfect plan for your infrastructure · Upgrade anytime, cancel anytime" onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} /><div className="mb-7 grid gap-4 md:grid-cols-2"><StatCard icon={Server} label="Active servers" value="0 / 20" meta="No active servers" /><StatCard icon={WalletCards} label="Wallet balance" value="$0.00" meta="Available for renewals" /></div><section><div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Pick your capacity</p><h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.03em] text-white">Plans that scale with you</h2></div><label className="dashboard-filter"><Search size={14} /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter plans" /></label></div><div className="plan-grid">{filteredPlans.map((plan) => <PlanCard key={plan.name} plan={plan} />)}</div>{filteredPlans.length === 0 && <div className="empty-search"><Search size={22} /><p>No plans match “{query}”.</p></div>}</section></DashboardLayout>;
 }
 
 
@@ -432,20 +440,20 @@ function VpsPage() {
 
   return <DashboardLayout><AppHeader title="VPS" subtitle="NVMe SSD · DDoS protected · Instant setup · Kenya location" onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />
     <div className="mb-7 flex items-end justify-between gap-4"><div><p className="eyebrow"><span className="eyebrow-dot" /> Virtual private servers</p><h2 className="mt-2 font-display text-xl font-semibold tracking-[-0.03em] text-white">Power without the complexity</h2></div><span className="hidden items-center gap-2 text-xs text-[#8b7aaa] sm:flex"><span className="status-dot" /> All systems operational</span></div>
-    <div className="vps-grid">{vpsPlans.map((plan) => <article key={plan.id} className={`vps-card ${plan.popular ? "vps-card-popular" : ""}`}>{plan.popular && <div className="vps-popular"><Sparkles size={12} /> POPULAR</div>}<div className="flex items-start gap-3"><div className="vps-emoji">{plan.emoji}</div><div><h3 className="text-[18px] font-bold text-white">{plan.name}</h3><p className="mt-1 text-xs text-[#a855f7]">{plan.vcpu} · {plan.storage}</p></div></div><div className="mt-5 flex items-baseline gap-2"><span className="font-display text-[27px] font-semibold tracking-[-0.04em] text-white">KSH {plan.price}</span><span className="text-xs text-[#6b5a8a]">/ monthly</span></div><p className="mt-2 min-h-[40px] text-[13px] leading-5 text-[#b8a9d9]">{plan.desc}</p><div className="mt-4 rounded-[10px] border border-[#2d1f4e]/70 bg-[#0f0a1a] px-3 py-2"><p className="text-[11px] font-semibold text-[#c084fc]">{plan.bestFor}</p></div><div className="my-4 h-px bg-[#2d1f4e]" /><div className="mb-5 flex-1 space-y-3"><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">RAM</span><span className="text-[13px] font-bold text-white">{plan.ram} DDR4</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Disk</span><span className="text-[13px] text-white">{plan.storage}</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Bandwidth</span><span className="text-[13px] text-white">{plan.bandwidth}</span></div></div><div className="plan-actions"><button onClick={() => choosePlan(plan)} className={`buy-button w-full ${plan.popular ? "buy-button-featured" : ""}`}>CONTINUE TO WALLET · KSH {plan.price}</button><button onClick={() => markPaid(plan)} disabled={processingId !== null || activatedId === plan.id} className="paid-button w-full">{processingId === plan.id ? "Processing..." : activatedId === plan.id ? "Activated" : "I have paid"} {activatedId === plan.id ? <Check size={14} /> : null}</button></div></article>)}</div>
+    <div className="vps-grid">{vpsPlans.map((plan) => <article key={plan.id} className={`vps-card ${plan.popular ? "vps-card-popular" : ""}`}>{plan.popular && <div className="vps-popular"><Sparkles size={12} /> POPULAR</div>}<div className="flex items-start gap-3"><div className="vps-emoji">{plan.emoji}</div><div><h3 className="text-[18px] font-bold text-white">{plan.name}</h3><p className="mt-1 text-xs text-[#a855f7]">{plan.vcpu} · {plan.storage}</p></div></div><div className="mt-5 flex items-baseline gap-2"><span className="font-display text-[27px] font-semibold tracking-[-0.04em] text-white">${plan.price}</span><span className="text-xs text-[#6b5a8a]">/ monthly</span></div><p className="mt-2 min-h-[40px] text-[13px] leading-5 text-[#b8a9d9]">{plan.desc}</p><div className="mt-4 rounded-[10px] border border-[#2d1f4e]/70 bg-[#0f0a1a] px-3 py-2"><p className="text-[11px] font-semibold text-[#c084fc]">{plan.bestFor}</p></div><div className="my-4 h-px bg-[#2d1f4e]" /><div className="mb-5 flex-1 space-y-3"><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">RAM</span><span className="text-[13px] font-bold text-white">{plan.ram} DDR4</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Disk</span><span className="text-[13px] text-white">{plan.storage}</span></div><div className="flex justify-between"><span className="text-[13px] text-[#8b7aaa]">Bandwidth</span><span className="text-[13px] text-white">{plan.bandwidth}</span></div></div><div className="plan-actions"><button onClick={() => choosePlan(plan)} className={`buy-button w-full ${plan.popular ? "buy-button-featured" : ""}`}>CONTINUE TO WALLET · ${plan.price}</button><button onClick={() => markPaid(plan)} disabled={processingId !== null || activatedId === plan.id} className="paid-button w-full">{processingId === plan.id ? "Processing..." : activatedId === plan.id ? "Activated" : "I have paid"} {activatedId === plan.id ? <Check size={14} /> : null}</button></div></article>)}</div>
   </DashboardLayout>;
 }
 
 function ServersPage() {
   const servers = JSON.parse(localStorage.getItem("fluxy_servers") || "[]") as { id: number; plan: string; ram: string; price: string; date: string; type: string }[];
-  return <DashboardLayout><AppHeader title="My Servers" subtitle="Keep an eye on every environment from one calm workspace." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />{servers.length === 0 ? <div className="empty-panel"><div className="server-illustration"><div className="server-rack"><span /><span /><span /></div><div className="server-pulse" /></div><h2 className="mt-7 font-display text-2xl font-semibold tracking-[-0.035em] text-white">No servers yet</h2><p className="mt-2 max-w-sm text-sm leading-6 text-[#877a9f]">Your infrastructure will show up here once you activate your first plan. Ready when you are.</p><Link href="/vps" className="primary-button mt-7">Explore plans <ArrowRight size={15} /></Link></div> : <div><div className="mb-5 flex items-end justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Provisioned infrastructure</p><h2 className="mt-2 font-display text-xl font-semibold text-white">Your active servers</h2></div><Link href="/vps" className="primary-button">Add server <Plus size={15} /></Link></div><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{servers.map((server) => <div key={server.id} className="server-card"><div className="flex items-center justify-between"><div className="flex items-center gap-3"><div className="server-status-icon"><Server size={17} /></div><div><h3 className="text-sm font-semibold text-white">{server.plan}</h3><p className="mt-1 text-[11px] text-[#807294]">{server.type} · {server.date}</p></div></div><span className="status-pill">Active</span></div><div className="mt-5 grid grid-cols-2 gap-3 border-t border-white/[0.07] pt-4"><div><p className="text-[10px] uppercase tracking-wider text-[#766a8c]">Memory</p><p className="mt-1 text-sm font-semibold text-white">{server.ram} DDR4</p></div><div><p className="text-[10px] uppercase tracking-wider text-[#766a8c]">Monthly</p><p className="mt-1 text-sm font-semibold text-white">KSH {server.price}</p></div></div></div>)}</div></div>}</DashboardLayout>;
+  return <DashboardLayout><AppHeader title="My Servers" subtitle="Keep an eye on every environment from one calm workspace." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />{servers.length === 0 ? <div className="empty-panel"><div className="server-illustration"><div className="server-rack"><span /><span /><span /></div><div className="server-pulse" /></div><h2 className="mt-7 font-display text-2xl font-semibold tracking-[-0.035em] text-white">No servers yet</h2><p className="mt-2 max-w-sm text-sm leading-6 text-[#877a9f]">Your infrastructure will show up here once you activate your first plan. Ready when you are.</p><Link href="/vps" className="primary-button mt-7">Explore plans <ArrowRight size={15} /></Link></div> : <div><div className="mb-5 flex items-end justify-between"><div><p className="eyebrow"><span className="eyebrow-dot" /> Provisioned infrastructure</p><h2 className="mt-2 font-display text-xl font-semibold text-white">Your active servers</h2></div><Link href="/vps" className="primary-button">Add server <Plus size={15} /></Link></div><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{servers.map((server) => <div key={server.id} className="server-card"><div className="flex items-center justify-between"><div className="flex items-center gap-3"><div className="server-status-icon"><Server size={17} /></div><div><h3 className="text-sm font-semibold text-white">{server.plan}</h3><p className="mt-1 text-[11px] text-[#807294]">{server.type} · {server.date}</p></div></div><span className="status-pill">Active</span></div><div className="mt-5 grid grid-cols-2 gap-3 border-t border-white/[0.07] pt-4"><div><p className="text-[10px] uppercase tracking-wider text-[#766a8c]">Memory</p><p className="mt-1 text-sm font-semibold text-white">{server.ram} DDR4</p></div><div><p className="text-[10px] uppercase tracking-wider text-[#766a8c]">Monthly</p><p className="mt-1 text-sm font-semibold text-white">${server.price}</p></div></div></div>)}</div></div>}</DashboardLayout>;
 }
 
 
 function WhatsappUnbanPage() {
   const service = {
     title: "BAN & UNBAN WATSAP⛔️🛡",
-    price: "630",
+    price: "4.85",
     type: "WhatsApp Ban & Unban Service",
   };
   const [, navigate] = useLocation();
@@ -473,7 +481,7 @@ function WhatsappUnbanPage() {
         setActivated(true);
         toast.success("WhatsApp Ban & Unban Service activated", { description: "Your annual service request was added to My Servers." });
       } else {
-        toast.error("Insufficient wallet balance", { description: "Add KES 630 to your wallet before activating this service." });
+        toast.error("Insufficient wallet balance", { description: "Add $4.85 to your wallet before activating this service." });
       }
     }, 700);
   }
@@ -483,15 +491,15 @@ function WhatsappUnbanPage() {
       <section className="relative overflow-hidden rounded-[24px] border border-[#3d2468] bg-[radial-gradient(circle_at_top_right,rgba(124,58,237,0.24),transparent_42%),#180d2a] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.22)] sm:p-9">
         <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[#7c3aed]/15 blur-3xl" />
         <div className="relative">
-          <div className="mb-5 flex flex-wrap items-center gap-3"><span className="rounded-full border border-[#7441c0]/60 bg-[#7c3aed]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#d8b4fe]">Annual WhatsApp Support</span><span className="status-pill">KES 630 <span className="ml-1 text-[10px] font-medium opacity-75">≈ $4.85 USD / year</span></span></div>
+          <div className="mb-5 flex flex-wrap items-center gap-3"><span className="rounded-full border border-[#7441c0]/60 bg-[#7c3aed]/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#d8b4fe]">Annual WhatsApp Support</span><span className="status-pill">$4.85 USD <span className="ml-1 text-[10px] font-medium opacity-75">per year</span></span></div>
           <h2 className="max-w-2xl font-display text-2xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">✅ {service.title}</h2>
           <p className="mt-4 max-w-2xl text-base leading-7 text-[#c0b2d5]">One purchase covers both account-ban recovery and WhatsApp unban appeal support for a full year.</p>
           <div className="mt-8 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             <div><p className="eyebrow"><span className="eyebrow-dot" /> What we fix</p><ul className="mt-4 space-y-3 text-sm leading-6 text-[#d9d0e7]"><li>• “Your number is banned from using WhatsApp”</li><li>• “You need official WhatsApp” and related app warnings</li><li>• Spam bans, Business bans, and GB WhatsApp bans</li><li>• Account-ban review and legitimate recovery guidance</li></ul></div>
-            <div><p className="eyebrow"><span className="eyebrow-dot" /> What you get for 630 KSH / year</p><ol className="mt-4 space-y-3 text-sm leading-6 text-[#d9d0e7]"><li><span className="mr-2 text-[#c084fc]">1.</span>Professional official appeal method</li><li><span className="mr-2 text-[#c084fc]">2.</span>Custom appeal emails and templates</li><li><span className="mr-2 text-[#c084fc]">3.</span>Account-ban recovery checklist and guidance</li><li><span className="mr-2 text-[#c084fc]">4.</span>Account-safety and future-ban prevention advice</li><li><span className="mr-2 text-[#c084fc]">5.</span>24hr WhatsApp support for follow-up questions</li></ol></div>
+            <div><p className="eyebrow"><span className="eyebrow-dot" /> What you get for $4.85 USD / year</p><ol className="mt-4 space-y-3 text-sm leading-6 text-[#d9d0e7]"><li><span className="mr-2 text-[#c084fc]">1.</span>Professional official appeal method</li><li><span className="mr-2 text-[#c084fc]">2.</span>Custom appeal emails and templates</li><li><span className="mr-2 text-[#c084fc]">3.</span>Account-ban recovery checklist and guidance</li><li><span className="mr-2 text-[#c084fc]">4.</span>Account-safety and future-ban prevention advice</li><li><span className="mr-2 text-[#c084fc]">5.</span>24hr WhatsApp support for follow-up questions</li></ol></div>
           </div>
           <div className="mt-8 rounded-2xl border border-white/[0.08] bg-black/15 p-5"><p className="eyebrow"><span className="eyebrow-dot" /> Requirements</p><p className="mt-3 text-sm leading-6 text-[#b9abcd]">Your banned WhatsApp number, the exact ban message or screenshot, and relevant account details needed to prepare a legitimate appeal.</p></div>
-          <div className="mt-8 flex flex-col gap-4 border-t border-white/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs uppercase tracking-[0.16em] text-[#817294]">One annual service fee</p><p className="mt-1 font-display text-3xl font-semibold text-white">KES 630</p><p className="mt-1 text-xs text-[#817294]">≈ $4.85 USD per year</p></div><div className="grid w-full gap-2 sm:w-auto sm:min-w-[220px]"><button onClick={buyNow} disabled={processing || activated} className="primary-button justify-center">{activated ? "Activated" : "Buy now"}<ArrowRight size={15} /></button><button onClick={markPaid} disabled={processing || activated} className="paid-button justify-center">{processing ? "Processing..." : activated ? "Activated" : "I have paid"}{activated ? <Check size={14} /> : null}</button></div></div>
+          <div className="mt-8 flex flex-col gap-4 border-t border-white/[0.08] pt-6 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-xs uppercase tracking-[0.16em] text-[#817294]">One annual service fee</p><p className="mt-1 font-display text-3xl font-semibold text-white">$4.85 USD</p><p className="mt-1 text-xs text-[#817294]">per year</p></div><div className="grid w-full gap-2 sm:w-auto sm:min-w-[220px]"><button onClick={buyNow} disabled={processing || activated} className="primary-button justify-center">{activated ? "Activated" : "Buy now"}<ArrowRight size={15} /></button><button onClick={markPaid} disabled={processing || activated} className="paid-button justify-center">{processing ? "Processing..." : activated ? "Activated" : "I have paid"}{activated ? <Check size={14} /> : null}</button></div></div>
         </div>
       </section>
     </div>
@@ -500,9 +508,9 @@ function WhatsappUnbanPage() {
 
 function ChannelsPage() {
   const plans = [
-    { id: "2k", label: "2k followers 🛸", price: "850" },
-    { id: "5k", label: "5k followers 🏈", price: "1300" },
-    { id: "7k", label: "7k followers ⛵", price: "2200" },
+    { id: "2k", label: "2k followers 🛸", price: "6.54" },
+    { id: "5k", label: "5k followers 🏈", price: "10.00" },
+    { id: "7k", label: "7k followers ⛵", price: "16.92" },
   ];
   const [showPay, setShowPay] = useState<(typeof plans)[number] | null>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -527,7 +535,7 @@ function ChannelsPage() {
     if (!showPay) return;
     const result = activatePlan({ name: showPay.label, price: showPay.price, ram: "—", type: "Channel" });
     if (!result.success) {
-      toast.error("Insufficient wallet balance", { description: `Add KES ${(Number(showPay.price) - result.balance).toFixed(2)} to purchase this channel plan.` });
+      toast.error("Insufficient wallet balance", { description: `Add $${(Number(showPay.price) - result.balance).toFixed(2)} to purchase this channel plan.` });
       return;
     }
     setShowPay(null);
@@ -538,21 +546,21 @@ function ChannelsPage() {
     <div className="mx-auto max-w-[1000px]">
       <div className="mb-6"><p className="eyebrow"><span className="eyebrow-dot" /> Audience growth</p><h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-white">Channel plans</h2><p className="mt-2 text-sm text-[#877a9f]">Choose a follower package and activate it from your wallet balance.</p></div>
       <div className="grid gap-5 md:grid-cols-3">
-        {plans.map((plan) => <div key={plan.id} className="plan-card group text-center"><div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#24133f] text-2xl transition-transform duration-200 group-hover:-translate-y-1">{plan.label.split(" ").at(-1)}</div><h3 className="text-base font-bold text-white">{plan.label.slice(0, -2)}</h3><p className="mt-3 font-display text-3xl font-semibold text-white"><span className="mr-1 text-xs font-medium text-[#8a7ca1]">KES</span>{plan.price}</p><div className="mt-6 grid gap-2"><button onClick={() => setShowPay(plan)} className="primary-button w-full">Buy now <ArrowRight size={15} /></button><button onClick={() => markPaid(plan)} disabled={processingId !== null || activatedId === plan.id} className="paid-button w-full">{processingId === plan.id ? "Processing..." : activatedId === plan.id ? "Activated" : "I have paid"}{activatedId === plan.id ? <Check size={14} /> : null}</button></div></div>)}
+        {plans.map((plan) => <div key={plan.id} className="plan-card group text-center"><div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#24133f] text-2xl transition-transform duration-200 group-hover:-translate-y-1">{plan.label.split(" ").at(-1)}</div><h3 className="text-base font-bold text-white">{plan.label.slice(0, -2)}</h3><p className="mt-3 font-display text-3xl font-semibold text-white"><span className="mr-1 text-xs font-medium text-[#8a7ca1]">$</span>{plan.price}</p><div className="mt-6 grid gap-2"><button onClick={() => setShowPay(plan)} className="primary-button w-full">Buy now <ArrowRight size={15} /></button><button onClick={() => markPaid(plan)} disabled={processingId !== null || activatedId === plan.id} className="paid-button w-full">{processingId === plan.id ? "Processing..." : activatedId === plan.id ? "Activated" : "I have paid"}{activatedId === plan.id ? <Check size={14} /> : null}</button></div></div>)}
       </div>
     </div>
-    {showPay && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close channel payment modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowPay(null)} /><div className="relative w-full max-w-[360px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowPay(null)} className="icon-button absolute right-4 top-4" aria-label="Close channel payment modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">📺</div><h3 className="text-base font-bold text-white">{showPay.label}</h3><p className="mt-1 text-sm text-[#a99abb]">KES {showPay.price}</p></div><div className="flex gap-3"><button onClick={() => setShowPay(null)} className="secondary-button flex-1">Cancel</button><button onClick={pay} className="primary-button flex-1">Pay KES {showPay.price}</button></div></div></div>}
+    {showPay && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close channel payment modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowPay(null)} /><div className="relative w-full max-w-[360px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowPay(null)} className="icon-button absolute right-4 top-4" aria-label="Close channel payment modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">📺</div><h3 className="text-base font-bold text-white">{showPay.label}</h3><p className="mt-1 text-sm text-[#a99abb]">${showPay.price}</p></div><div className="flex gap-3"><button onClick={() => setShowPay(null)} className="secondary-button flex-1">Cancel</button><button onClick={pay} className="primary-button flex-1">Pay ${showPay.price}</button></div></div></div>}
   </DashboardLayout>;
 }
 
 function ForeignNumbersPage() {
   const numbers = [
-    { id: "usa", country: "USA", flag: "🇺🇸", price: "750", code: "+1" },
-    { id: "uk", country: "UK", flag: "🇬🇧", price: "600", code: "+44" },
-    { id: "canada", country: "Canada", flag: "🇨🇦", price: "500", code: "+1" },
-    { id: "germany", country: "Germany", flag: "🇩🇪", price: "650", code: "+49" },
-    { id: "netherlands", country: "Netherlands", flag: "🇳🇱", price: "600", code: "+31" },
-    { id: "australia", country: "Australia", flag: "🇦🇺", price: "750", code: "+61" },
+    { id: "usa", country: "USA", flag: "🇺🇸", price: "5.77", code: "+1" },
+    { id: "uk", country: "UK", flag: "🇬🇧", price: "4.62", code: "+44" },
+    { id: "canada", country: "Canada", flag: "🇨🇦", price: "3.85", code: "+1" },
+    { id: "germany", country: "Germany", flag: "🇩🇪", price: "5.00", code: "+49" },
+    { id: "netherlands", country: "Netherlands", flag: "🇳🇱", price: "4.62", code: "+31" },
+    { id: "australia", country: "Australia", flag: "🇦🇺", price: "5.77", code: "+61" },
   ];
   const [showPay, setShowPay] = useState<(typeof numbers)[number] | null>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -577,7 +585,7 @@ function ForeignNumbersPage() {
     if (!showPay) return;
     const result = activatePlan({ name: `${showPay.country} number ${showPay.code}`, price: showPay.price, ram: "—", type: "Foreign Number" });
     if (!result.success) {
-      toast.error("Insufficient wallet balance", { description: `Add KES ${(Number(showPay.price) - result.balance).toFixed(2)} to purchase this number.` });
+      toast.error("Insufficient wallet balance", { description: `Add $${(Number(showPay.price) - result.balance).toFixed(2)} to purchase this number.` });
       return;
     }
     setShowPay(null);
@@ -588,26 +596,26 @@ function ForeignNumbersPage() {
     <div className="mx-auto max-w-[1100px]">
       <div className="mb-6"><p className="eyebrow"><span className="eyebrow-dot" /> Global reach</p><h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-white">International numbers</h2><p className="mt-2 text-sm text-[#877a9f]">Pick a country and activate a virtual number using your wallet balance.</p></div>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-        {numbers.map((number) => <div key={number.id} className="plan-card group text-center"><div className="mb-2 text-[36px] transition-transform duration-200 group-hover:-translate-y-1">{number.flag}</div><h3 className="text-sm font-bold text-white">{number.country} {number.code}</h3><p className="my-3 font-display text-2xl font-semibold text-white"><span className="mr-1 text-xs font-medium text-[#8a7ca1]">KES</span>{number.price}</p><div className="grid gap-2"><button onClick={() => setShowPay(number)} className="primary-button w-full">Buy now <ArrowRight size={15} /></button><button onClick={() => markPaid(number)} disabled={processingId !== null || activatedId === number.id} className="paid-button w-full">{processingId === number.id ? "Processing..." : activatedId === number.id ? "Activated" : "I have paid"}{activatedId === number.id ? <Check size={14} /> : null}</button></div></div>)}
+        {numbers.map((number) => <div key={number.id} className="plan-card group text-center"><div className="mb-2 text-[36px] transition-transform duration-200 group-hover:-translate-y-1">{number.flag}</div><h3 className="text-sm font-bold text-white">{number.country} {number.code}</h3><p className="my-3 font-display text-2xl font-semibold text-white"><span className="mr-1 text-xs font-medium text-[#8a7ca1]">$</span>{number.price}</p><div className="grid gap-2"><button onClick={() => setShowPay(number)} className="primary-button w-full">Buy now <ArrowRight size={15} /></button><button onClick={() => markPaid(number)} disabled={processingId !== null || activatedId === number.id} className="paid-button w-full">{processingId === number.id ? "Processing..." : activatedId === number.id ? "Activated" : "I have paid"}{activatedId === number.id ? <Check size={14} /> : null}</button></div></div>)}
       </div>
     </div>
-    {showPay && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close foreign number payment modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowPay(null)} /><div className="relative w-full max-w-[360px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowPay(null)} className="icon-button absolute right-4 top-4" aria-label="Close foreign number payment modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">{showPay.flag}</div><h3 className="text-base font-bold text-white">{showPay.country} {showPay.code}</h3><p className="mt-1 text-sm text-[#a99abb]">KES {showPay.price}</p></div><div className="flex gap-3"><button onClick={() => setShowPay(null)} className="secondary-button flex-1">Cancel</button><button onClick={pay} className="primary-button flex-1">Pay KES {showPay.price}</button></div></div></div>}
+    {showPay && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close foreign number payment modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowPay(null)} /><div className="relative w-full max-w-[360px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowPay(null)} className="icon-button absolute right-4 top-4" aria-label="Close foreign number payment modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">{showPay.flag}</div><h3 className="text-base font-bold text-white">{showPay.country} {showPay.code}</h3><p className="mt-1 text-sm text-[#a99abb]">${showPay.price}</p></div><div className="flex gap-3"><button onClick={() => setShowPay(null)} className="secondary-button flex-1">Cancel</button><button onClick={pay} className="primary-button flex-1">Pay ${showPay.price}</button></div></div></div>}
   </DashboardLayout>;
 }
 
 function OnlineJobsPage() {
   const jobs = [
-    { id: "data-entry", title: "Data Entry & Typing", emoji: "⌨️", pay: "$5 - $15 / hour", fee: "430", desc: "Simple typing jobs. Copy data from images/PDFs to system. No experience needed, just fast typing.", tasks: ["Typing 30WPM+", "Copy paste", "2-3 hrs daily"], time: "2-4 Hours Daily" },
-    { id: "image-annotation", title: "Image Annotation", emoji: "🖼️", pay: "$8 - $20 / hour", fee: "500", popular: true, desc: "Draw boxes around cars, people, objects in images to train AI self-driving cars. Highest paying.", tasks: ["Draw boxes on images", "Label objects", "Train AI models"], time: "3-5 Hours Daily" },
-    { id: "audio-transcription", title: "Audio Transcription", emoji: "🎧", pay: "$6 - $18 / hour", fee: "400", desc: "Listen to short audio clips (5-10 sec) and type what you hear. Good for good listeners.", tasks: ["Listen & type", "English audio", "Short clips"], time: "2-3 Hours Daily" },
-    { id: "content-moderation", title: "Content Moderation", emoji: "🛡️", pay: "$7 - $16 / hour", fee: "450", desc: "Review posts, images, videos and decide if they follow rules. Work for big social apps.", tasks: ["Review posts", "Flag bad content", "Follow guidelines"], time: "Flexible Hours" },
-    { id: "lidar", title: "3D LiDAR Annotation", emoji: "🚗", pay: "$12 - $30 / hour", fee: "850", desc: "Premium job. Annotate 3D point cloud data for self-driving AI. Training provided, high pay.", tasks: ["3D box annotation", "Advanced level", "Training included"], time: "4-6 Hours Daily" },
-    { id: "ai-chat", title: "AI Chat Trainer", emoji: "🤖", pay: "$10 - $25 / hour", fee: "650", desc: "Chat with AI and rate its answers. Help make AI smarter. Easy English writing job.", tasks: ["Chat with AI", "Rate responses", "Write examples"], time: "2-4 Hours Daily" },
+    { id: "data-entry", title: "Data Entry & Typing", emoji: "⌨️", pay: "$5 - $15 / hour", fee: "3.31", desc: "Simple typing jobs. Copy data from images/PDFs to system. No experience needed, just fast typing.", tasks: ["Typing 30WPM+", "Copy paste", "2-3 hrs daily"], time: "2-4 Hours Daily" },
+    { id: "image-annotation", title: "Image Annotation", emoji: "🖼️", pay: "$8 - $20 / hour", fee: "3.85", popular: true, desc: "Draw boxes around cars, people, objects in images to train AI self-driving cars. Highest paying.", tasks: ["Draw boxes on images", "Label objects", "Train AI models"], time: "3-5 Hours Daily" },
+    { id: "audio-transcription", title: "Audio Transcription", emoji: "🎧", pay: "$6 - $18 / hour", fee: "3.08", desc: "Listen to short audio clips (5-10 sec) and type what you hear. Good for good listeners.", tasks: ["Listen & type", "English audio", "Short clips"], time: "2-3 Hours Daily" },
+    { id: "content-moderation", title: "Content Moderation", emoji: "🛡️", pay: "$7 - $16 / hour", fee: "3.46", desc: "Review posts, images, videos and decide if they follow rules. Work for big social apps.", tasks: ["Review posts", "Flag bad content", "Follow guidelines"], time: "Flexible Hours" },
+    { id: "lidar", title: "3D LiDAR Annotation", emoji: "🚗", pay: "$12 - $30 / hour", fee: "6.54", desc: "Premium job. Annotate 3D point cloud data for self-driving AI. Training provided, high pay.", tasks: ["3D box annotation", "Advanced level", "Training included"], time: "4-6 Hours Daily" },
+    { id: "ai-chat", title: "AI Chat Trainer", emoji: "🤖", pay: "$10 - $25 / hour", fee: "5.00", desc: "Chat with AI and rate its answers. Help make AI smarter. Easy English writing job.", tasks: ["Chat with AI", "Rate responses", "Write examples"], time: "2-4 Hours Daily" },
   ];
   const [showApply, setShowApply] = useState<(typeof jobs)[number] | null>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [activatedId, setActivatedId] = useState<string | null>(null);
-  const usdRate = 130;
+  const usdRate = 1;
 
   function markPaid(job: (typeof jobs)[number]) {
     if (processingId || activatedId === job.id) return;
@@ -628,7 +636,7 @@ function OnlineJobsPage() {
     if (!showApply) return;
     const result = activatePlan({ name: showApply.title, price: showApply.fee, ram: "—", type: "Online Job" });
     if (!result.success) {
-      toast.error("Insufficient wallet balance", { description: `Add KES ${(Number(showApply.fee) - result.balance).toFixed(2)} to pay this application fee.` });
+      toast.error("Insufficient wallet balance", { description: `Add $${(Number(showApply.fee) - result.balance).toFixed(2)} to pay this application fee.` });
       return;
     }
     setShowApply(null);
@@ -639,17 +647,17 @@ function OnlineJobsPage() {
     <div className="mx-auto max-w-[1200px]">
       <div className="mb-6"><p className="eyebrow"><span className="eyebrow-dot" /> Work from home</p><h2 className="mt-2 font-display text-2xl font-semibold tracking-[-0.04em] text-white">Online jobs</h2><p className="mt-2 text-sm text-[#877a9f]">Remote tasks with daily payouts and training included.</p></div>
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-        {jobs.map((job) => <div key={job.id} className={`plan-card flex flex-col ${job.popular ? "border-[#7c3aed] shadow-[0_0_20px_rgba(124,58,237,0.2)]" : ""}`}>{job.popular && <span className="mb-3 w-fit rounded-full bg-[#7c3aed] px-3 py-1 text-[10px] font-bold text-white">MOST DEMANDED 🔥</span>}<div className="mb-3 flex items-center gap-3"><div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#2d1f4e] bg-[#0f0a1a] text-[22px]">{job.emoji}</div><div><h3 className="text-[15px] font-bold leading-tight text-white">{job.title}</h3><p className="text-xs font-semibold text-[#a855f7]">{job.pay}</p></div></div><p className="mb-4 text-[13px] leading-[1.5] text-[#b8a9d9]">{job.desc}</p><div className="mb-4 space-y-1.5 rounded-xl bg-[#0f0a1a] p-3">{job.tasks.map((task) => <div key={task} className="flex gap-2 text-xs text-[#8b7aaa]"><span className="text-[#a855f7]">•</span>{task}</div>)}<div className="pt-1 text-[11px] text-[#6b5a8a]">⏰ {job.time}</div></div><div className="mt-auto flex items-center justify-between border-t border-white/[0.07] pt-4"><div><p className="text-[11px] text-[#6b5a8a]">Application fee</p><p className="text-lg font-extrabold text-white">KES {job.fee}</p><p className="text-[10px] text-[#7f7195]">≈ ${(Number(job.fee) / usdRate).toFixed(2)} USD</p></div><div className="grid gap-2"><button onClick={() => setShowApply(job)} className="primary-button px-5">Apply now</button><button onClick={() => markPaid(job)} disabled={processingId !== null || activatedId === job.id} className="paid-button w-full">{processingId === job.id ? "Processing..." : activatedId === job.id ? "Activated" : "I have paid"}{activatedId === job.id ? <Check size={14} /> : null}</button></div></div></div>)}
+        {jobs.map((job) => <div key={job.id} className={`plan-card flex flex-col ${job.popular ? "border-[#7c3aed] shadow-[0_0_20px_rgba(124,58,237,0.2)]" : ""}`}>{job.popular && <span className="mb-3 w-fit rounded-full bg-[#7c3aed] px-3 py-1 text-[10px] font-bold text-white">MOST DEMANDED 🔥</span>}<div className="mb-3 flex items-center gap-3"><div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#2d1f4e] bg-[#0f0a1a] text-[22px]">{job.emoji}</div><div><h3 className="text-[15px] font-bold leading-tight text-white">{job.title}</h3><p className="text-xs font-semibold text-[#a855f7]">{job.pay}</p></div></div><p className="mb-4 text-[13px] leading-[1.5] text-[#b8a9d9]">{job.desc}</p><div className="mb-4 space-y-1.5 rounded-xl bg-[#0f0a1a] p-3">{job.tasks.map((task) => <div key={task} className="flex gap-2 text-xs text-[#8b7aaa]"><span className="text-[#a855f7]">•</span>{task}</div>)}<div className="pt-1 text-[11px] text-[#6b5a8a]">⏰ {job.time}</div></div><div className="mt-auto flex items-center justify-between border-t border-white/[0.07] pt-4"><div><p className="text-[11px] text-[#6b5a8a]">Application fee</p><p className="text-lg font-extrabold text-white">${job.fee}</p><p className="text-[10px] text-[#7f7195]">USD</p></div><div className="grid gap-2"><button onClick={() => setShowApply(job)} className="primary-button px-5">Apply now</button><button onClick={() => markPaid(job)} disabled={processingId !== null || activatedId === job.id} className="paid-button w-full">{processingId === job.id ? "Processing..." : activatedId === job.id ? "Activated" : "I have paid"}{activatedId === job.id ? <Check size={14} /> : null}</button></div></div></div>)}
       </div>
     </div>
-    {showApply && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close job application modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowApply(null)} /><div className="relative w-full max-w-[390px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowApply(null)} className="icon-button absolute right-4 top-4" aria-label="Close job application modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">{showApply.emoji}</div><h3 className="text-base font-bold text-white">{showApply.title}</h3><p className="mt-1 text-sm text-[#a99abb]">Application fee: KES {showApply.fee}</p><p className="mt-1 text-[11px] text-[#7f7195]">≈ ${(Number(showApply.fee) / usdRate).toFixed(2)} USD</p></div><div className="flex gap-3"><button onClick={() => setShowApply(null)} className="secondary-button flex-1">Cancel</button><button onClick={apply} className="primary-button flex-1">Pay KES {showApply.fee}</button></div></div></div>}
+    {showApply && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close job application modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowApply(null)} /><div className="relative w-full max-w-[390px] rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] p-6 shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><button onClick={() => setShowApply(null)} className="icon-button absolute right-4 top-4" aria-label="Close job application modal"><X size={15} /></button><div className="mb-5 text-center"><div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-2xl">{showApply.emoji}</div><h3 className="text-base font-bold text-white">{showApply.title}</h3><p className="mt-1 text-sm text-[#a99abb]">Application fee: ${showApply.fee}</p><p className="mt-1 text-[11px] text-[#7f7195]">≈ $${Number(showApply.fee).toFixed(2)} USD</p></div><div className="flex gap-3"><button onClick={() => setShowApply(null)} className="secondary-button flex-1">Cancel</button><button onClick={apply} className="primary-button flex-1">Pay ${showApply.fee}</button></div></div></div>}
   </DashboardLayout>;
 }
 
 function WalletPage() {
   const paystackUrl = "https://paystack.shop/pay/o2dkau16m7";
   const [showPay, setShowPay] = useState(false);
-  const [balance] = useState(() => Number(localStorage.getItem("fluxy_balance") || "0"));
+  const [balance] = useState(() => { ensureUsdWallet(); return Number(localStorage.getItem("fluxy_balance") || "0"); });
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -661,7 +669,7 @@ function WalletPage() {
 
   return <DashboardLayout><AppHeader title="Wallet" subtitle="Manage your balance and transactions." onMenu={() => window.dispatchEvent(new Event("fluxy:open-menu"))} />
     <div className="mx-auto max-w-[1000px]">
-      <div className="wallet-hero mb-6"><div className="wallet-hero-glow" /><div className="relative"><p className="text-[13px] font-medium text-[#a99abb]">Current balance</p><p className="mt-2 font-display text-[40px] font-semibold tracking-[-0.055em] text-white">KES {balance.toFixed(2)}</p><p className="mt-1 text-xs text-[#74678c]">Available for renewals &amp; purchases</p><button onClick={() => setShowPay(true)} className="primary-button mt-6">+ Add funds</button><p className="mt-3 text-[11px] text-[#6b5a8a]">Secure payment by Paystack · Instant credit</p></div></div>
+      <div className="wallet-hero mb-6"><div className="wallet-hero-glow" /><div className="relative"><p className="text-[13px] font-medium text-[#a99abb]">Current balance</p><p className="mt-2 font-display text-[40px] font-semibold tracking-[-0.055em] text-white">${balance.toFixed(2)}</p><p className="mt-1 text-xs text-[#74678c]">Available for renewals &amp; purchases</p><button onClick={() => setShowPay(true)} className="primary-button mt-6">+ Add funds</button><p className="mt-3 text-[11px] text-[#6b5a8a]">Secure payment by Paystack · Instant credit</p></div></div>
     </div>
     {showPay && <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"><button aria-label="Close payment modal" className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setShowPay(false)} /><div className="wallet-pay-modal relative w-full max-w-[480px] overflow-hidden rounded-[20px] border border-[#2d1f4e] bg-[#1a102e] shadow-[0_25px_80px_rgba(0,0,0,0.7)]"><div className="flex items-center justify-between border-b border-[#2d1f4e] bg-[#0f0a1a] p-5"><div className="flex items-center gap-3"><div className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-gradient-to-br from-[#7c3aed] to-[#a855f7] text-lg">💳</div><div><h3 className="text-[15px] font-bold text-white">Add funds</h3><p className="text-[11px] text-[#8b7aaa]">Paystack secure checkout</p></div></div><button onClick={() => setShowPay(false)} className="icon-button" aria-label="Close payment modal"><X size={15} /></button></div><div className="bg-white"><iframe src={paystackUrl} title="Paystack Checkout" className="h-[600px] w-full border-0" allow="payment" loading="eager" /></div><div className="flex items-center justify-between border-t border-[#2d1f4e] bg-[#0f0a1a] p-3"><span className="text-[11px] text-[#6b5a8a]">🔒 Secured by Paystack</span></div></div></div>}
   </DashboardLayout>;
